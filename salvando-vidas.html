@@ -735,7 +735,8 @@ function toggleCopyPanel(idx, nombreEnc, momentoEnc, btnEl){
   }
 
   const texto = sustituirVariables(copy.Copy_Texto, d);
-  const url = waLink(copy.Numero_WA, texto);
+  const numero = copy.Numero_WA || d.Telefono_WA || "";
+  const url = waLink(numero, texto);
 
   panel.innerHTML = `
     <div class="copy-inner">
@@ -762,8 +763,8 @@ function abrirCopyDirecto(nombreEnc, momentoEnc){
   const copy = copyMap[momento];
   if(!copy){ alert("No se encontró el copy para este momento."); return; }
   const texto = sustituirVariables(copy.Copy_Texto, d);
-  const url = waLink(copy.Numero_WA, texto);
-  window.open(url, "_blank");
+  const numero = copy.Numero_WA || d.Telefono_WA || "";
+  window.open(waLink(numero, texto), "_blank");
 }
 
 function applyFilters(){

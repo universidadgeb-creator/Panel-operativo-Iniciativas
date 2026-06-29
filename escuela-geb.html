@@ -1165,34 +1165,32 @@ function renderAsistenciasVisual(){
     container.innerHTML = '<div style="padding:24px;color:var(--text-soft);text-align:center;">Sin registros de asistencia</div>';
     return;
   }
-  // Agrupar por Fecha_Clase + Tema
+  // Obtener nombres de todos los inscritos INEA activos
+  var activosINEA = INSCRITOS.filter(function(d){
+    return (d.Modalidad||"").toUpperCase() === "INEA" && (d.Estado||"").toLowerCase() === "activo";
+  }).map(function(d){ return d.Nombre; });
+
+  // Agrupar por Fecha_Clase + Tema — cada fila tiene nombres en col D separados por coma
   var clases = [];
   var claseMap = {};
   ASISTENCIAS.forEach(function(a){
     var key = (a.Fecha_Clase||"") + "||" + (a.Tema||"");
     if(!claseMap[key]){
-      claseMap[key] = { fecha: a.Fecha_Clase||"—", tema: a.Tema||"—", notas: a.Notas||"", asistieron: [], faltaron: [] };
+      claseMap[key] = { fecha: a.Fecha_Clase||"—", tema: a.Tema||"—", notas: a.Notas||"", asistieron: [] };
       clases.push(claseMap[key]);
     }
-    var asist = (a.Asistio||"").toLowerCase();
-    if(asist === "sí" || asist === "si"){
-      claseMap[key].asistieron.push(a.Nombre);
-    } else {
-      claseMap[key].faltaron.push(a.Nombre);
-    }
+    // Col D = nombres separados por coma de quienes asistieron
+    var nombres = (a.Asistio||"").split(",").map(function(n){ return n.trim(); }).filter(function(n){ return n; });
+    nombres.forEach(function(n){
+      if(claseMap[key].asistieron.indexOf(n) < 0) claseMap[key].asistieron.push(n);
+    });
   });
 
-  // Obtener nombres de todos los inscritos INEA activos para detectar faltantes
-  var activosINEA = INSCRITOS.filter(function(d){
-    return (d.Modalidad||"").toUpperCase() === "INEA" && (d.Estado||"").toLowerCase() === "activo";
-  }).map(function(d){ return d.Nombre; });
-
   container.innerHTML = clases.map(function(c){
-    // Faltantes = activos INEA que no están en asistieron ni en faltaron registrados
-    var registrados = {};
-    c.asistieron.concat(c.faltaron).forEach(function(n){ registrados[n] = true; });
-    var noRegistrados = activosINEA.filter(function(n){ return !registrados[n]; });
-    var todosAusentes = c.faltaron.concat(noRegistrados);
+    // Faltantes = activos INEA que no asistieron
+    var asistSet = {};
+    c.asistieron.forEach(function(n){ asistSet[n.toLowerCase()] = true; });
+    var todosAusentes = activosINEA.filter(function(n){ return !asistSet[n.toLowerCase()]; });
 
     var totalAsist = c.asistieron.length;
     var totalFalta = todosAusentes.length;
