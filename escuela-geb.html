@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escuela GEB — GEB Iniciativas Humanas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0B2545;
+    --gold:#C49B4C;
+    --bg:#F7F5F0;
+    --card:#FFFFFF;
+    --text:#1C2A3A;
+    --text-soft:#5C6B7A;
+    --border:#E3E1D9;
+    --green-bg:#EAF3DE; --green-text:#3B6D11;
+    --amber-bg:#FAEEDA; --amber-text:#854F0B;
+    --gray-bg:#F1EFE8; --gray-text:#5F5E5A;
+    --red-bg:#FCEBEB; --red-text:#A32D2D;
+    --blue-bg:#E6F1FB; --blue-text:#185FA5;
+    --purple-bg:#EEEDFE; --purple-text:#3C3489;
+    --inea-bg:#E6F1FB; --inea-text:#185FA5; --inea-border:#185FA5;
+    --uvl-bg:#EEEDFE; --uvl-text:#3C3489; --uvl-border:#3C3489;
+    --remedial-bg:#FAEEDA; --remedial-text:#854F0B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'DM Sans', sans-serif; background:var(--bg); color:var(--text); }
+  .wrap{ max-width:1180px; margin:0 auto; padding:24px 20px 60px; }
+
+  /* topbar */
+  .topbar{
+    background:var(--blue); color:#fff; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar .brand{ display:flex; align-items:center; gap:10px; }
+  .topbar .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--gold); }
+  .topbar .brand-text{ font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:600; letter-spacing:.01em; }
+  .topbar .meta{ font-size:12px; color:#C9D3DF; }
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:500;
+    color:var(--text-soft); text-decoration:none; margin-bottom:14px;
+  }
+  .back-link:hover{ color:var(--blue); }
+
+  header.page-header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:28px; flex-wrap:wrap; gap:10px;
+    border-bottom:2px solid var(--gold); padding-bottom:16px;
+  }
+  header.page-header h1{ font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:600; color:var(--blue); }
+  header.page-header .sub{ color:var(--text-soft); font-size:13px; }
+
+  /* métricas */
+  .metric-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:28px; }
+  .metric{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .metric.alert{ background:var(--red-bg); border-color:#f0c7c7; }
+  .metric .val{ font-size:26px; font-weight:700; color:var(--blue); line-height:1.1; }
+  .metric.alert .val{ color:var(--red-text); }
+  .metric .lbl{ font-size:12px; color:var(--text-soft); margin-top:4px; }
+  .metric.alert .lbl{ color:var(--red-text); }
+
+  /* secciones */
+  .section{ margin-bottom:32px; }
+  .section-title{ font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600; color:var(--blue); margin-bottom:12px; }
+  .section-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+
+  .modalidad-badge{
+    font-size:12px; font-weight:600; padding:4px 12px; border-radius:99px;
+  }
+  .modalidad-badge.inea{ background:var(--inea-bg); color:var(--inea-text); }
+  .modalidad-badge.uvl{ background:var(--uvl-bg); color:var(--uvl-text); }
+
+  /* cards de inscritos */
+  .inscritos-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; }
+  .icard{
+    background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px;
+  }
+  .icard.seguimiento{ border-color:var(--gold); background:#FFFBF1; }
+  .icard.inea{ border-left:3px solid var(--inea-border); }
+  .icard.uvl{ border-left:3px solid var(--uvl-border); }
+  .icard-head{ display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+  .avatar{
+    width:36px; height:36px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:13px;
+  }
+  .avatar.inea{ background:var(--inea-bg); color:var(--inea-text); }
+  .avatar.uvl{ background:var(--uvl-bg); color:var(--uvl-text); }
+  .iname{ font-weight:600; font-size:14px; color:var(--text); }
+  .isuc{ font-size:12px; color:var(--text-soft); }
+
+  .pill{ display:inline-block; font-size:11px; font-weight:600; padding:2px 9px; border-radius:99px; margin-right:4px; margin-bottom:6px; }
+  .pill.activo{ background:var(--green-bg); color:var(--green-text); }
+  .pill.inactivo{ background:var(--gray-bg); color:var(--gray-text); }
+  .pill.baja{ background:var(--red-bg); color:var(--red-text); }
+  .pill.remedial{ background:var(--remedial-bg); color:var(--remedial-text); }
+  .pill.historico{ background:#EEEEEE; color:#777770; font-style:italic; }
+  .pill.seguimiento-tag{ background:var(--amber-bg); color:var(--amber-text); }
+  .pill.nivel{ background:var(--gray-bg); color:var(--text); }
+  .pill.inea-tag{ background:var(--inea-bg); color:var(--inea-text); }
+  .pill.uvl-tag{ background:var(--uvl-bg); color:var(--uvl-text); }
+  .pill.diag{ background:#F3EEF8; color:#5B2D8E; font-size:10px; }
+
+  .icard-detail{ font-size:12px; color:var(--text-soft); margin-bottom:8px; line-height:1.5; }
+  .icard-detail strong{ color:var(--text); }
+
+  .iactions{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .wa-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500;
+    color:var(--text-soft); background:#F4F3EE; border:1px solid var(--border);
+    border-radius:8px; padding:7px 10px; cursor:pointer; text-align:left; transition:background .15s;
+  }
+  .wa-btn:hover{ background:#E9E7DF; }
+  .wa-btn .ic{ color:#25D366; font-weight:700; }
+  .atender-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600;
+    color:var(--amber-text); background:var(--amber-bg); border:1px solid #f0d39a;
+    border-radius:8px; padding:6px 10px; cursor:pointer; margin-top:4px;
+  }
+  .atender-btn:hover{ background:#f5e2bd; }
+
+  /* filtros / tabla */
+  .filters{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .filters input, .filters select{
+    font-size:13px; padding:8px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--card); color:var(--text); font-family:inherit;
+  }
+  .filters input{ width:220px; }
+
+  .table-wrap{ overflow-x:auto; background:var(--card); border:1px solid var(--border); border-radius:12px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  thead th{
+    text-align:left; font-size:11px; font-weight:700; color:var(--text-soft);
+    padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  tbody td{ padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr.seguimiento-row{ background:#FFFBF1; }
+  .name-cell{ display:flex; align-items:center; gap:8px; }
+  .dot-new{ width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+
+  .expand-row td{ padding:0 !important; }
+  .copy-panel{ display:none; background:#FAF9F5; padding:16px 18px; border-top:1px dashed var(--border); }
+  .copy-panel.open{ display:block; }
+  .copy-inner{ display:grid; grid-template-columns:1fr auto; gap:18px; align-items:start; }
+  .copy-label{ font-size:11px; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px; }
+  .copy-text{
+    font-size:13.5px; line-height:1.6; background:var(--card); border:1px solid var(--border);
+    border-radius:8px; padding:12px 14px; white-space:pre-wrap;
+  }
+  .momento-title{ font-size:14px; font-weight:600; color:var(--blue); margin-bottom:8px; }
+  .open-wa{
+    display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600;
+    padding:10px 18px; border-radius:8px; background:#25D366; color:#fff;
+    text-decoration:none; white-space:nowrap;
+  }
+  .open-wa:hover{ background:#1fb958; }
+
+  /* divisor de secciones */
+  .section-divider{
+    display:flex; align-items:center; gap:12px; margin:28px 0 20px;
+  }
+  .section-divider .divider-label{
+    font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--blue);
+    white-space:nowrap;
+  }
+  .section-divider .divider-line{
+    flex:1; height:1px; background:var(--border);
+  }
+
+  .footnote{
+    font-size:11.5px; color:var(--text-soft); display:flex; align-items:center; gap:6px; padding:12px 4px;
+  }
+  .loading, .errorbox{ text-align:center; padding:40px; color:var(--text-soft); font-size:14px; }
+  .errorbox{ color:var(--red-text); }
+  .empty-state{ font-size:13px; color:var(--text-soft); padding:16px 0; }
+
+  /* ---- forms inline ---- */
+  .inline-form{
+    background:#FAF9F5; border:1px solid var(--border); border-radius:10px;
+    padding:14px; margin-top:10px; display:none;
+  }
+  .inline-form.open{ display:block; }
+  .inline-form-title{ font-size:12px; font-weight:700; color:var(--blue); margin-bottom:10px; text-transform:uppercase; letter-spacing:.03em; }
+  .form-row{ margin-bottom:8px; }
+  .form-row label{ display:block; font-size:11px; font-weight:600; color:var(--text-soft); margin-bottom:3px; }
+  .form-row input, .form-row select, .form-row textarea{
+    width:100%; font-size:12px; font-family:inherit; padding:6px 9px;
+    border:1px solid var(--border); border-radius:6px; background:var(--card); color:var(--text);
+  }
+  .form-row textarea{ resize:vertical; min-height:52px; }
+  .form-checkbox-group{ display:flex; flex-direction:column; gap:5px; margin-top:4px; }
+  .form-checkbox-group label{ display:flex; align-items:center; gap:7px; font-size:12px; font-weight:400; color:var(--text); cursor:pointer; }
+  .form-checkbox-group input[type=checkbox]{ width:14px; height:14px; flex-shrink:0; }
+  .form-actions{ display:flex; gap:8px; margin-top:10px; }
+  .btn-guardar{
+    font-size:12px; font-weight:600; padding:7px 14px; border-radius:7px;
+    background:var(--blue); color:#fff; border:none; cursor:pointer;
+  }
+  .btn-guardar:hover{ background:#0d2f5e; }
+  .btn-guardar:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-cancelar{
+    font-size:12px; font-weight:500; padding:7px 12px; border-radius:7px;
+    background:var(--bg); color:var(--text-soft); border:1px solid var(--border); cursor:pointer;
+  }
+  .form-msg{ font-size:11.5px; margin-top:6px; padding:6px 10px; border-radius:6px; display:none; }
+  .form-msg.ok{ background:var(--green-bg); color:var(--green-text); display:block; }
+  .form-msg.err{ background:var(--red-bg); color:var(--red-text); display:block; }
+  .reg-btn{
+    display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600;
+    color:var(--blue); background:var(--blue-bg); border:1px solid #c5d9f0;
+    border-radius:7px; padding:6px 10px; cursor:pointer; margin-top:4px;
+  }
+  .reg-btn:hover{ background:#d4e5f7; }
+
+  @media(max-width:720px){
+    .metric-grid{ grid-template-columns:repeat(2,1fr); }
+    .copy-inner{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <span class="brand-text">GEB University — Iniciativas Humanas</span>
+  </div>
+  <div class="meta">Panel interno</div>
+</div>
+
+<div class="wrap">
+
+  <a href="index.html" class="back-link">← volver al panel general</a>
+
+  <header class="page-header">
+    <div>
+      <h1>Escuela GEB</h1>
+      <div class="sub">GEB Iniciativas Humanas — Movilidad Social</div>
+    </div>
+    <div class="sub" id="lastSync">cargando datos...</div>
+  </header>
+
+  <div id="loadingMsg" class="loading">Cargando datos desde Google Sheets…</div>
+  <div id="errorMsg" class="errorbox" style="display:none;"></div>
+
+  <div id="appContent" style="display:none;">
+
+    <!-- JOURNEY MAP -->
+    <div class="section" style="margin-bottom:28px;">
+      <div class="section-title" style="margin-bottom:14px;">Ruta del colaborador</div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; overflow-x:auto; display:flex; justify-content:center;">
+        <svg viewBox="0 0 710 220" role="img" style="width:680px; max-width:100%;">
+          <title>Journey del colaborador — Escuela GEB</title>
+          <defs>
+            <marker id="jarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <rect x="10" y="88" width="72" height="36" rx="6" fill="#F3EEF8" stroke="#5B2D8E" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#3D1A6E" x="46" y="106" text-anchor="middle" dominant-baseline="central">Interés</text>
+          <line x1="82" y1="106" x2="96" y2="106" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="96" y="88" width="72" height="36" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#633806" x="132" y="106" text-anchor="middle" dominant-baseline="central">Inscripción</text>
+
+          <path d="M168 106 Q182 106 182 76 Q182 56 196 56" fill="none" stroke="#185FA5" stroke-width="1" marker-end="url(#jarrow)"/>
+          <path d="M168 106 Q182 106 182 136 Q182 156 196 156" fill="none" stroke="#3C3489" stroke-width="1" marker-end="url(#jarrow)"/>
+          <text font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#185FA5" x="178" y="46" text-anchor="middle">INEA</text>
+          <text font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#3C3489" x="178" y="168" text-anchor="middle">UVL</text>
+
+          <rect x="196" y="38" width="72" height="36" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#0C447C" x="232" y="56" text-anchor="middle" dominant-baseline="central">Clase</text>
+          <line x1="268" y1="56" x2="282" y2="56" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="282" y="38" width="72" height="36" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#27500A" x="318" y="56" text-anchor="middle" dominant-baseline="central">Recordatorio</text>
+          <line x1="354" y1="56" x2="368" y2="56" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="368" y="38" width="72" height="36" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#444441" x="404" y="56" text-anchor="middle" dominant-baseline="central">Post-clase</text>
+          <line x1="440" y1="56" x2="454" y2="56" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="454" y="38" width="72" height="36" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#633806" x="490" y="56" text-anchor="middle" dominant-baseline="central">Examen</text>
+          <line x1="526" y1="56" x2="540" y2="56" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="540" y="38" width="72" height="36" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#27500A" x="576" y="56" text-anchor="middle" dominant-baseline="central">Felicitación</text>
+          <line x1="612" y1="56" x2="626" y2="56" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="626" y="38" width="72" height="36" rx="6" fill="#0B2545" stroke="#0B2545" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#C49B4C" x="662" y="56" text-anchor="middle" dominant-baseline="central">Graduación</text>
+
+          <path d="M490 38 Q490 20 404 20 Q318 20 318 38" fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#jarrow)"/>
+          <text font-family="DM Sans,sans-serif" font-size="8" fill="#5F5E5A" x="404" y="14" text-anchor="middle">nuevo ciclo</text>
+
+          <rect x="196" y="138" width="72" height="36" rx="6" fill="#EEEDFE" stroke="#3C3489" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#2A2370" x="232" y="156" text-anchor="middle" dominant-baseline="central">Convocatoria</text>
+          <line x1="268" y1="156" x2="282" y2="156" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="282" y="138" width="72" height="36" rx="6" fill="#EEEDFE" stroke="#3C3489" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#2A2370" x="318" y="156" text-anchor="middle" dominant-baseline="central">Examen</text>
+          <line x1="354" y1="156" x2="368" y2="156" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="368" y="138" width="72" height="36" rx="6" fill="#EEEDFE" stroke="#3C3489" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#2A2370" x="404" y="156" text-anchor="middle" dominant-baseline="central">Resultados</text>
+
+          <path d="M440 156 Q450 156 450 136 Q450 120 464 120" fill="none" stroke="#3B6D11" stroke-width="1" marker-end="url(#jarrow)"/>
+          <path d="M440 156 Q450 156 450 176 Q450 192 464 192" fill="none" stroke="#854F0B" stroke-width="1" marker-end="url(#jarrow)"/>
+          <text font-family="DM Sans,sans-serif" font-size="8" fill="#3B6D11" x="456" y="118" text-anchor="end">pasa</text>
+          <text font-family="DM Sans,sans-serif" font-size="8" fill="#854F0B" x="456" y="196" text-anchor="end">no pasa</text>
+
+          <rect x="464" y="104" width="72" height="32" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#27500A" x="500" y="120" text-anchor="middle" dominant-baseline="central">Admitido</text>
+          <line x1="536" y1="120" x2="550" y2="120" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <rect x="550" y="104" width="72" height="32" rx="6" fill="#0B2545" stroke="#0B2545" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#C49B4C" x="586" y="120" text-anchor="middle" dominant-baseline="central">Graduación</text>
+
+          <rect x="464" y="178" width="72" height="32" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#633806" x="500" y="194" text-anchor="middle" dominant-baseline="central">No admitido</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metric-grid" id="metricsGrid"></div>
+
+    <!-- ESTADÍSTICAS GENERALES GEB -->
+    <div class="section" style="margin-bottom:20px;">
+      <div class="section-title" style="margin-bottom:10px;">Contexto educativo GEB</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+          <div style="font-size:10px; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Año escolaridad promedio</div>
+          <div id="statEscPromedio" style="font-size:24px; font-weight:700; color:var(--blue); line-height:1.1;">—</div>
+          <div id="statEscPromedioLabel" style="font-size:11px; color:var(--text-soft); margin-top:3px;">calculando…</div>
+          <div style="font-size:9.5px; color:var(--text-soft); margin-top:8px; border-top:1px solid var(--border); padding-top:7px;">Método INEGI · datos agrupados</div>
+        </div>
+
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+          <div style="font-size:10px; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Nivel de escolaridad</div>
+          <div id="statNiveles">—</div>
+        </div>
+
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+          <div style="font-size:10px; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Rezago educativo</div>
+          <div id="statRezago" style="font-size:24px; font-weight:700; color:var(--blue); line-height:1.1;">—</div>
+          <div style="font-size:11px; color:var(--text-soft); margin-top:3px;">de colaboradores con diagnóstico</div>
+          <div style="font-size:9.5px; color:var(--text-soft); margin-top:8px; border-top:1px solid var(--border); padding-top:7px;">Metodología CONEVAL · criterios SEP</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== SECCIÓN INEA ===== -->
+    <div class="section-divider">
+      <span class="divider-label">Modalidad INEA</span>
+      <span class="divider-line"></span>
+      <span class="modalidad-badge inea">Presencial · Naciones Unidas</span>
+      <button class="reg-btn" onclick="toggleFormAsistencia()">+ Registrar asistencia</button>
+    </div>
+
+    <!-- Form global asistencias -->
+    <div class="inline-form" id="formAsistencia">
+      <div class="inline-form-title">Registrar clase</div>
+      <div class="form-row">
+        <label>Fecha de clase *</label>
+        <input type="date" id="fa_fecha">
+      </div>
+      <div class="form-row">
+        <label>Tema trabajado *</label>
+        <input type="text" id="fa_tema" placeholder="ej. Módulo 2 — Operaciones básicas">
+      </div>
+      <div class="form-row">
+        <label>¿Quiénes asistieron?</label>
+        <div class="form-checkbox-group" id="fa_checkboxes"></div>
+      </div>
+      <div class="form-row">
+        <label>Notas (opcional)</label>
+        <textarea id="fa_notas" placeholder="Observaciones, cambios de fecha, etc."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-guardar" onclick="guardarAsistencia()">Guardar</button>
+        <button class="btn-cancelar" onclick="toggleFormAsistencia()">Cancelar</button>
+      </div>
+      <div class="form-msg" id="fa_msg"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title" style="margin-bottom:0;">Inscritos activos</div>
+      </div>
+      <div class="inscritos-grid" id="ineaGrid"></div>
+    </div>
+
+    <!-- ===== SECCIÓN UVL ===== -->
+    <div class="section-divider">
+      <span class="divider-label">Modalidad UVL</span>
+      <span class="divider-line"></span>
+      <span class="modalidad-badge uvl">Universidad Virtual de Liverpool</span>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title" style="margin-bottom:0;">Inscritos activos</div>
+      </div>
+      <div class="inscritos-grid" id="uvlGrid"></div>
+    </div>
+
+    <!-- ===== TABLA COMPLETA ===== -->
+    <div class="section-divider">
+      <span class="divider-label">Todos los inscritos</span>
+      <span class="divider-line"></span>
+    </div>
+
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fSearch" placeholder="buscar nombre o sucursal…">
+        <select id="fModalidad">
+          <option value="">todas las modalidades</option>
+          <option value="INEA">INEA</option>
+          <option value="UVL">UVL</option>
+          <option value="Prospecto">Prospecto</option>
+        </select>
+        <select id="fNivel">
+          <option value="">todos los niveles</option>
+          <option value="Primaria">Primaria</option>
+          <option value="Secundaria">Secundaria</option>
+          <option value="Preparatoria">Preparatoria</option>
+        </select>
+        <select id="fEstado">
+          <option value="">todos los estados</option>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+          <option value="Baja">Baja</option>
+          <option value="Remedial">Remedial</option>
+          <option value="Histórico">Histórico</option>
+        </select>
+        <select id="fSeguimiento">
+          <option value="">todos</option>
+          <option value="Si">pendientes de seguimiento</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Sucursal</th>
+              <th>Modalidad</th>
+              <th>Nivel</th>
+              <th>Diagnóstico</th>
+              <th>Estado</th>
+              <th>Mensajes</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody"></tbody>
+        </table>
+      </div>
+      <div class="footnote">
+        📊 datos y copys desde Google Sheets · se actualizan al recargar la página
+      </div>
+    </div>
+
+  </div><!-- /appContent -->
+</div><!-- /wrap -->
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN
+   ============================================================ */
+const SHEET_ID  = "1fS5qeoB1ViuCUP4HOQ1zTJgh4tfWUkObvb5LMr3to5A";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8QmMkIKFlse1yIsIxJk6LjvBW8WYjNTf51f54KubtakiKkYhUOPZmYUN4S76JBF_YeQ/exec";
+
+const TABS = {
+  inscritos:    "EG_Inscritos",
+  asistencias:  "EG_Asistencias",
+  examenes:     "EG_Examenes",
+  copys:        "EG_Copys",
+  concentrado:  "Concentrado"
+};
+
+/* Mapeo por posición fija — nunca por label (gviz devuelve label vacío con QUERY) */
+const SCHEMA = {
+  EG_Inscritos: [
+    "Nombre",              // A (0)
+    "Sucursal",            // B (1)
+    "Telefono_WA",         // C (2)
+    "Diagnostico_Edu",     // D (3)
+    "Modalidad",           // E (4)
+    "Nivel",               // F (5)
+    "Estado",              // G (6)
+    "Fecha_Inscripcion",   // H (7)
+    "Requiere_Seguimiento" // I (8)
+  ],
+  EG_Asistencias: [
+    "Timestamp",    // A (0) — Google Forms lo agrega automático
+    "Fecha_Clase",  // B (1)
+    "Tema",         // C (2)
+    "Asistentes",   // D (3) — nombres concatenados por coma
+    "Notas"         // E (4)
+  ],
+  EG_Examenes: [
+    "Nombre",         // A (0)
+    "Modalidad",      // B (1)
+    "Tipo",           // C (2)
+    "Tema_Materia",   // D (3)
+    "Fecha_Examen",   // E (4)
+    "Resultado",      // F (5)
+    "Calificacion",   // G (6)
+    "Notas"           // H (7)
+  ],
+  EG_Copys: [
+    "Momento",    // A (0)
+    "Modalidad",  // B (1)
+    "Copy_Texto", // C (2)
+    "Activo"      // D (3)
+  ],
+  // Concentrado: leemos columnas clave por índice directamente, sin SCHEMA completo
+  Concentrado: null
+};
+
+/* Equivalencias años de escolaridad (Método INEGI datos agrupados) */
+const EQUIV_AÑOS = {
+  "primaria": 6, "secundaria": 9, "preparatoria": 12,
+  "carrera técnica": 14, "licenciatura": 16, "posgrado": 20
+};
+
+const NIVEL_LABEL = {
+  "primaria":"Primaria","secundaria":"Secundaria","preparatoria":"Preparatoria",
+  "carrera técnica":"Carrera técnica","licenciatura":"Licenciatura","posgrado":"Posgrado"
+};
+
+/* ============================================================
+   FETCH GENÉRICO gviz (sin API key)
+   ============================================================ */
+function gvizUrl(tabName){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+}
+
+function formatTel(val){
+  if(!val) return "";
+  const s = String(val).replace(/\.0$/,"").replace(/\D/g,"");
+  if(s.length === 10) return "+52" + s;
+  if(s.length === 12 && s.startsWith("52")) return "+" + s;
+  return s;
+}
+
+async function fetchSheetTab(tabName){
+  const res  = await fetch(gvizUrl(tabName));
+  const text = await res.text();
+  const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+  const headers = SCHEMA[tabName];
+
+  return json.table.rows
+    .filter(r => r && r.c && r.c.some(cell => cell && cell.v !== null && cell.v !== ""))
+    .filter(r => {
+      // Descartar fila de subencabezados que gviz incluye cuando la pestaña usa QUERY
+      const firstVal = r.c && r.c[0] ? (r.c[0].v || "") : "";
+      return firstVal !== "Nombre";
+    })
+    .map(r => {
+      const obj = {};
+      headers.forEach((col, i) => {
+        const cell = r.c ? r.c[i] : null;
+        let val = cell ? (cell.f !== undefined && cell.f !== null ? cell.f : cell.v) : "";
+        if(val === null || val === undefined) val = "";
+        if(col === "Telefono_WA") val = formatTel(val);
+        obj[col] = val;
+      });
+      return obj;
+    });
+}
+
+/* ============================================================
+   FETCH CONCENTRADO (columnas por índice directo, no SCHEMA)
+   Cols relevantes: B=Nombre(0) F=FechaNac(5) P=Diagnostico(15) Q=EscuelaGEB(16)
+   ============================================================ */
+async function fetchConcentrado(){
+  const res  = await fetch(gvizUrl(TABS.concentrado));
+  const text = await res.text();
+  const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+  return json.table.rows
+    .filter(r => r && r.c && r.c[0] && r.c[0].v && typeof r.c[0].v === 'string' && r.c[0].v.trim() !== '')
+    .filter(r => r.c[0].v !== 'Nombre') // descartar subencabezado que gviz incluye
+    .map(r => {
+      const c = r.c;
+      const get = (i) => (c[i] && c[i].v !== null && c[i].v !== undefined) ? c[i].v : null;
+      return {
+        nombre:   get(0),   // A — Nombre
+        fechaNac: get(5),   // F — Fecha nacimiento
+        diag:     get(15),  // P — Diagnóstico educativo
+      };
+    });
+}
+
+/* ============================================================
+   CALCULAR Y RENDERIZAR ESTADÍSTICAS GENERALES
+   ============================================================ */
+function renderStats(concentrado){
+  const AÑO_ACTUAL = 2026;
+
+  // Filtrar solo quienes tienen diagnóstico válido (no vacío, no ".")
+  const validos = concentrado.filter(d => {
+    const diag = (d.diag || '').toString().trim().toLowerCase();
+    return diag && diag !== '.' && EQUIV_AÑOS[diag] !== undefined;
+  });
+
+  // --- Año escolaridad promedio ---
+  const sumaAños = validos.reduce((s, d) => s + EQUIV_AÑOS[d.diag.toLowerCase().trim()], 0);
+  const promedio = validos.length ? (sumaAños / validos.length).toFixed(2) : '—';
+  const labelPromedio = promedio >= 12 ? 'Bachillerato concluido' : promedio >= 9 ? 'Secundaria concluida' : promedio >= 6 ? 'Primaria concluida' : '';
+  document.getElementById('statEscPromedio').textContent = promedio;
+  document.getElementById('statEscPromedioLabel').textContent = labelPromedio;
+
+  // --- Niveles de escolaridad ---
+  const niveles = {};
+  validos.forEach(d => {
+    const k = d.diag.trim().toLowerCase();
+    niveles[k] = (niveles[k] || 0) + 1;
+  });
+  const totalNiv = validos.length;
+  const ordenNiveles = ['primaria','secundaria','preparatoria','carrera técnica','licenciatura','posgrado'];
+  const coloresNiv = {
+    'primaria':'#854F0B','secundaria':'#185FA5','preparatoria':'#3C3489',
+    'carrera técnica':'#5F5E5A','licenciatura':'#0B2545','posgrado':'#C49B4C'
+  };
+  let htmlNiv = '';
+  ordenNiveles.forEach(k => {
+    if(!niveles[k]) return;
+    const pct = Math.round(niveles[k] / totalNiv * 100);
+    const color = coloresNiv[k] || '#888';
+    htmlNiv += `
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <div style="width:36px; font-size:12px; font-weight:700; color:${color}; text-align:right; flex-shrink:0;">${pct}%</div>
+        <div style="flex:1; height:7px; border-radius:99px; background:var(--bg); overflow:hidden;">
+          <div style="width:${pct}%; height:100%; background:${color}; border-radius:99px;"></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-soft); white-space:nowrap;">${NIVEL_LABEL[k]||k}</div>
+      </div>`;
+  });
+  document.getElementById('statNiveles').innerHTML = htmlNiv || '<span style="font-size:12px;color:var(--text-soft);">Sin datos</span>';
+
+  // --- Rezago educativo CONEVAL ---
+  let rezago = 0, totalRezago = 0;
+  concentrado.forEach(d => {
+    const diag = (d.diag || '').toString().trim().toLowerCase();
+    if(!diag || diag === '.') return;
+
+    // Extraer año de nacimiento desde fecha gviz (puede llegar como "Date(1990,0,15)" o timestamp)
+    let añoNac = null;
+    if(d.fechaNac) {
+      if(typeof d.fechaNac === 'string' && d.fechaNac.startsWith('Date(')) {
+        añoNac = parseInt(d.fechaNac.replace('Date(','').split(',')[0]);
+      } else if(typeof d.fechaNac === 'number') {
+        // gviz devuelve fechas como días desde 1899-12-30
+        const msPerDay = 86400000;
+        const epoch = new Date(Date.UTC(1899,11,30)).getTime();
+        añoNac = new Date(epoch + d.fechaNac * msPerDay).getUTCFullYear();
+      }
+    }
+    if(!añoNac) return;
+    totalRezago++;
+
+    // Criterios CONEVAL
+    let enRezago = false;
+    if(añoNac < 1982){
+      enRezago = false; // Solo rezago si no concluyó primaria — aquí "Primaria" = concluida
+    } else if(añoNac <= 1997){
+      enRezago = diag === 'primaria';
+    } else {
+      enRezago = diag === 'primaria' || diag === 'secundaria';
+    }
+    if(enRezago) rezago++;
+  });
+
+  const tre = totalRezago ? (rezago / totalRezago * 100).toFixed(1) : '—';
+  document.getElementById('statRezago').textContent = tre + '%';
+}
+function initials(name){
+  const p = (name||"").trim().split(/\s+/);
+  return ((p[0]?.[0]||"")+(p[1]?.[0]||"")).toUpperCase();
+}
+
+function isSeguimiento(d){
+  const v = (d.Requiere_Seguimiento||"").trim().toLowerCase();
+  return v === "sí" || v === "si" || v === "";
+}
+
+function estadoPill(estado){
+  const e = (estado||"").toLowerCase();
+  if(e === "activo")    return `<span class="pill activo">Activo</span>`;
+  if(e === "inactivo")  return `<span class="pill inactivo">Inactivo</span>`;
+  if(e === "baja")      return `<span class="pill baja">Baja</span>`;
+  if(e === "remedial")  return `<span class="pill remedial">Remedial</span>`;
+  if(e === "histórico" || e === "historico") return `<span class="pill historico">Histórico</span>`;
+  return `<span class="pill inactivo">${estado||"—"}</span>`;
+}
+
+function modalidadClass(m){
+  const mu = (m||"").toUpperCase();
+  if(mu === "UVL" || mu === "PROSPECTO") return "uvl";
+  return "inea";
+}
+
+function waLink(telefono, texto){
+  const phone = (telefono||"").replace(/[^\d+]/g,"");
+  return `https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(texto)}`;
+}
+
+function sustituirVariables(texto, d){
+  return (texto||"")
+    .replace(/\{Nombre\}/g,    (d.Nombre||"").split(" ")[0])
+    .replace(/\{Modalidad\}/g, d.Modalidad||"")
+    .replace(/\{Nivel\}/g,     d.Nivel||"")
+    .replace(/\{Diagnostico\}/g, d.Diagnostico_Edu||"")
+    .replace(/\{Fecha_Inscripcion\}/g, d.Fecha_Inscripcion||"");
+}
+
+/* ============================================================
+   LÓGICA DE MOMENTOS
+   ============================================================ */
+function getMomentosDisponibles(d){
+  if(isSeguimiento(d)) return ["Bienvenida"];
+
+  const estado    = (d.Estado||"").toLowerCase();
+  const modalidad = (d.Modalidad||"").toUpperCase().trim();
+
+  // Sin modalidad asignada aún
+  if(!modalidad) return ["Información de modalidades"];
+
+  // Histórico — solo registro, sin comunicación
+  if(estado === "histórico" || estado === "historico") return [];
+
+  if(estado === "baja")     return [];
+  if(estado === "inactivo") return [];
+  if(estado === "remedial") return ["Invitación remedial / INEA"];
+
+  if(estado !== "activo" && estado !== "en espera") return [];
+
+  if(modalidad === "INEA"){
+    return ["Recordatorio de clase", "Seguimiento post-clase", "Impulso a examen", "Felicitación por examen"];
+  }
+  if(modalidad === "UVL"){
+    return ["Convocatoria abierta", "Seguimiento post-examen UVL", "Invitación remedial / INEA"];
+  }
+  if(modalidad === "PROSPECTO"){
+    return ["Convocatoria abierta"];
+  }
+  return [];
+}
+
+/* ============================================================
+   DATOS GLOBALES
+   ============================================================ */
+let INSCRITOS   = [];
+let ASISTENCIAS = [];
+let EXAMENES    = [];
+let COPYS       = [];
+
+function buildCopyMap(){
+  const map = {};
+  COPYS.forEach(c => {
+    const activo = (c.Activo||"").toLowerCase();
+    if(activo === "sí" || activo === "si"){
+      map[c.Momento] = c;
+    }
+  });
+  return map;
+}
+
+/* ============================================================
+   RENDER: MÉTRICAS
+   ============================================================ */
+function renderMetrics(){
+  const total       = INSCRITOS.length;
+  const activos     = INSCRITOS.filter(d => (d.Estado||"").toLowerCase() === "activo").length;
+  const inea        = INSCRITOS.filter(d => (d.Modalidad||"").toUpperCase() === "INEA").length;
+  const uvl         = INSCRITOS.filter(d => (d.Modalidad||"").toUpperCase() === "UVL").length;
+  const prospectos  = INSCRITOS.filter(d => (d.Modalidad||"").toUpperCase() === "PROSPECTO").length;
+  const seguimiento = INSCRITOS.filter(isSeguimiento).length;
+
+  const grid = document.getElementById("metricsGrid");
+  grid.innerHTML = [
+    { val: total,      lbl: "inscritos totales",          alert: false },
+    { val: activos,    lbl: "activos",                    alert: false },
+    { val: inea,       lbl: "modalidad INEA",             alert: false },
+    { val: uvl,        lbl: "modalidad UVL",              alert: false },
+    { val: prospectos, lbl: "prospectos UVL",             alert: false },
+    { val: seguimiento,lbl: "pendientes de seguimiento",  alert: seguimiento > 0 },
+  ].map(m => `
+    <div class="metric ${m.alert ? 'alert' : ''}">
+      <div class="val">${m.val}</div>
+      <div class="lbl">${m.lbl}</div>
+    </div>
+  `).join("");
+}
+
+/* ============================================================
+   RENDER: CARDS (INEA / UVL)
+   ============================================================ */
+function renderCards(containerId, modalidad){
+  const copyMap = buildCopyMap();
+  const mc      = modalidad.toUpperCase();
+  const grid    = document.getElementById(containerId);
+
+  let candidatos;
+  if(mc === "INEA"){
+    // INEA activos — excluir históricos
+    candidatos = INSCRITOS.filter(d =>
+      (d.Modalidad||"").toUpperCase() === "INEA" &&
+      (d.Estado||"").toLowerCase() === "activo"
+    );
+  } else {
+    // UVL: activos + prospectos (en espera)
+    candidatos = INSCRITOS.filter(d => {
+      const mod    = (d.Modalidad||"").toUpperCase();
+      const estado = (d.Estado||"").toLowerCase();
+      if(mod === "UVL")       return estado === "activo" || estado === "en espera";
+      if(mod === "PROSPECTO") return true;
+      return false;
+    });
+  }
+
+  if(candidatos.length === 0){
+    grid.innerHTML = `<div class="empty-state">No hay inscritos activos en esta modalidad.</div>`;
+    return;
+  }
+
+  grid.innerHTML = candidatos.map((d) => {
+    const mc2      = modalidadClass(d.Modalidad);
+    const seg      = isSeguimiento(d);
+    const momentos = getMomentosDisponibles(d);
+    const modUp    = (d.Modalidad||"").toUpperCase();
+
+    const btns = momentos.map(m => {
+      const copy = copyMap[m];
+      if(!copy) return "";
+      return `<button class="wa-btn" onclick="abrirCopyDirecto('${encodeURIComponent(d.Nombre)}','${encodeURIComponent(m)}')">
+                <span class="ic">●</span> ${m}
+              </button>`;
+    }).join("");
+
+    const exams  = EXAMENES.filter(e => e.Nombre === d.Nombre);
+    const asists = ASISTENCIAS.filter(a => a.Nombre === d.Nombre);
+    let detalle  = "";
+    if(modUp === "INEA"){
+      const totalClases  = ASISTENCIAS.length;
+      const asistio      = ASISTENCIAS.filter(a => {
+        const nombres = (a.Asistentes||"").split(",").map(n => n.trim());
+        return nombres.includes(d.Nombre);
+      }).length;
+      const ultimoExamen = exams.length > 0 ? exams[exams.length-1] : null;
+      detalle = `<div class="icard-detail">
+        Asistencias: <strong>${asistio}/${totalClases}</strong>
+        ${ultimoExamen ? `· Último examen: <strong>${ultimoExamen.Tema_Materia||"—"}</strong> (${ultimoExamen.Resultado||"—"})` : ""}
+      </div>`;
+    } else if(modUp === "UVL"){
+      const ultimoExamen = exams.length > 0 ? exams[exams.length-1] : null;
+      detalle = ultimoExamen ? `<div class="icard-detail">
+        Examen admisión: <strong>${ultimoExamen.Resultado||"Pendiente"}</strong>
+        ${ultimoExamen.Fecha_Examen ? `· ${ultimoExamen.Fecha_Examen}` : ""}
+      </div>` : "";
+    }
+
+    // Pill de modalidad para prospectos
+    const modPill = modUp === "PROSPECTO"
+      ? `<span class="pill uvl-tag">Prospecto</span>`
+      : "";
+
+    const cardId = `card-${d.Nombre.replace(/\s+/g,'_')}`;
+    const formId = `form-ex-${d.Nombre.replace(/\s+/g,'_')}`;
+
+    return `
+      <div class="icard ${seg?'seguimiento':''} ${mc2}" id="${cardId}">
+        <div class="icard-head">
+          <div class="avatar ${mc2}">${initials(d.Nombre)}</div>
+          <div>
+            <div class="iname">${d.Nombre}</div>
+            <div class="isuc">${d.Sucursal||""}</div>
+          </div>
+        </div>
+        ${d.Nivel ? `<span class="pill nivel">${d.Nivel}</span>` : ""}
+        ${d.Diagnostico_Edu ? `<span class="pill diag">${d.Diagnostico_Edu}</span>` : ""}
+        ${modPill}
+        ${seg
+          ? `<span class="pill seguimiento-tag">🏳 seguimiento</span>`
+          : modUp === "PROSPECTO"
+            ? `<span class="pill inactivo">En espera</span>`
+            : `<span class="pill activo">activo</span>`}
+        ${detalle}
+        <div class="iactions">${btns}</div>
+        ${modUp !== "PROSPECTO" ? `<button class="reg-btn" style="margin-top:8px;" onclick="toggleFormExamen('${formId}')">+ Registrar examen</button>` : ""}
+        <div class="inline-form" id="${formId}">
+          <div class="inline-form-title">Registrar examen — ${d.Nombre.split(' ')[0]}</div>
+          <div class="form-row">
+            <label>Tipo *</label>
+            <select id="${formId}_tipo">
+              <option value="">— selecciona —</option>
+              <option value="Tema">Tema (INEA)</option>
+              <option value="Admisión">Admisión (UVL)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Tema o convocatoria *</label>
+            <input type="text" id="${formId}_tema" placeholder="ej. Fracciones / Convocatoria feb-25">
+          </div>
+          <div class="form-row">
+            <label>Fecha del examen *</label>
+            <input type="date" id="${formId}_fecha">
+          </div>
+          <div class="form-row">
+            <label>Resultado *</label>
+            <select id="${formId}_resultado">
+              <option value="">— selecciona —</option>
+              <option value="Aprobado">Aprobado</option>
+              <option value="No aprobado">No aprobado</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Calificación (opcional)</label>
+            <input type="number" id="${formId}_cal" placeholder="ej. 8.5" min="0" max="10" step="0.1">
+          </div>
+          <div class="form-row">
+            <label>Notas (opcional)</label>
+            <textarea id="${formId}_notas" placeholder="Observaciones"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn-guardar" onclick="guardarExamen('${formId}','${encodeURIComponent(d.Nombre)}','${d.Modalidad}')">Guardar</button>
+            <button class="btn-cancelar" onclick="toggleFormExamen('${formId}')">Cancelar</button>
+          </div>
+          <div class="form-msg" id="${formId}_msg"></div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ============================================================
+   RENDER: TABLA COMPLETA
+   ============================================================ */
+function renderTabla(filtered){
+  const copyMap = buildCopyMap();
+  const body    = document.getElementById("tablaBody");
+
+  if(filtered.length === 0){
+    body.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-soft);">Sin resultados</td></tr>`;
+    return;
+  }
+
+  let html = "";
+  filtered.forEach((d, i) => {
+    const seg  = isSeguimiento(d);
+    const mc2  = modalidadClass(d.Modalidad);
+    const momentos = getMomentosDisponibles(d);
+
+    const btns = momentos.map(m => {
+      const copy = copyMap[m];
+      if(!copy) return "";
+      return `<button class="wa-btn" onclick="toggleCopyPanel(${i},'${encodeURIComponent(d.Nombre)}','${encodeURIComponent(m)}')">
+                <span class="ic">●</span> ${m}
+              </button>`;
+    }).join("");
+
+    html += `
+      <tr class="${seg?'seguimiento-row':''}">
+        <td>
+          <div class="name-cell">
+            ${seg ? `<span class="dot-new"></span>` : ""}
+            <div>
+              <div style="font-weight:600;">${d.Nombre}</div>
+              ${seg ? `<span style="font-size:11px;color:var(--text-soft);">nuevo — requiere seguimiento</span>` : ""}
+            </div>
+          </div>
+        </td>
+        <td>${d.Sucursal||"—"}</td>
+        <td>
+          <span class="pill ${mc2}-tag">${d.Modalidad||"—"}</span>
+        </td>
+        <td>${d.Nivel||"—"}</td>
+        <td>${d.Diagnostico_Edu ? `<span class="pill diag">${d.Diagnostico_Edu}</span>` : '<span style="color:var(--text-soft);font-size:12px;">—</span>'}</td>
+        <td>
+          ${estadoPill(d.Estado)}
+          ${seg ? `<button class="atender-btn" onclick="alert('Para marcar como atendido, cambia Requiere_Seguimiento a No en la pestaña EG_Inscritos para ${d.Nombre.replace(/'/g,"\\'")}.')">✓ marcar atendido</button>` : ""}
+        </td>
+        <td><div style="display:flex;flex-wrap:wrap;gap:5px;">${btns||'<span style="color:var(--text-soft);font-size:12px;">—</span>'}</div></td>
+      </tr>
+      <tr class="expand-row" id="exp-${i}">
+        <td colspan="7"><div class="copy-panel" id="cp-${i}"></div></td>
+      </tr>
+    `;
+  });
+
+  body.innerHTML = html;
+}
+
+/* ============================================================
+   COPY PANELS
+   ============================================================ */
+function toggleCopyPanel(idx, nombreEnc, momentoEnc){
+  const nombre  = decodeURIComponent(nombreEnc);
+  const momento = decodeURIComponent(momentoEnc);
+  const d       = INSCRITOS.find(x => x.Nombre === nombre);
+  if(!d) return;
+
+  const copyMap = buildCopyMap();
+  const copy    = copyMap[momento];
+  const panel   = document.getElementById(`cp-${idx}`);
+  if(!panel) return;
+
+  document.querySelectorAll('.copy-panel').forEach(p => { if(p !== panel) p.classList.remove('open'); });
+
+  if(panel.classList.contains('open') && panel.dataset.momento === momento){
+    panel.classList.remove('open');
+    return;
+  }
+
+  if(!copy){ alert("No se encontró el copy para este momento."); return; }
+
+  const texto = sustituirVariables(copy.Copy_Texto, d);
+  const url   = waLink(d.Telefono_WA, texto);
+
+  panel.innerHTML = `
+    <div class="copy-inner">
+      <div>
+        <div class="momento-title">${momento}</div>
+        <div class="copy-label">copy desde Google Sheets</div>
+        <div class="copy-text">${texto}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding-top:24px;align-items:center;">
+        <a href="${url}" target="_blank" class="open-wa">Abrir en WhatsApp</a>
+        <span style="font-size:11px;color:var(--text-soft);">abre wa.me directo</span>
+      </div>
+    </div>
+  `;
+  panel.dataset.momento = momento;
+  panel.classList.add('open');
+}
+
+function abrirCopyDirecto(nombreEnc, momentoEnc){
+  const nombre  = decodeURIComponent(nombreEnc);
+  const momento = decodeURIComponent(momentoEnc);
+  const d       = INSCRITOS.find(x => x.Nombre === nombre);
+  if(!d) return;
+  const copyMap = buildCopyMap();
+  const copy    = copyMap[momento];
+  if(!copy){ alert("No se encontró el copy para este momento."); return; }
+  const texto = sustituirVariables(copy.Copy_Texto, d);
+  window.open(waLink(d.Telefono_WA, texto), "_blank");
+}
+
+/* ============================================================
+   FILTROS
+   ============================================================ */
+function applyFilters(){
+  const q          = document.getElementById("fSearch").value.toLowerCase();
+  const modalidad  = document.getElementById("fModalidad").value;
+  const nivel      = document.getElementById("fNivel").value;
+  const estado     = document.getElementById("fEstado").value;
+  const seguimiento = document.getElementById("fSeguimiento").value;
+
+  const filtered = INSCRITOS.filter(d => {
+    const matchQ   = !q || (d.Nombre||"").toLowerCase().includes(q) || (d.Sucursal||"").toLowerCase().includes(q);
+    const matchM   = !modalidad || (d.Modalidad||"").toUpperCase() === modalidad.toUpperCase();
+    const matchN   = !nivel || d.Nivel === nivel;
+    const matchE   = !estado || d.Estado === estado;
+    const seg      = isSeguimiento(d);
+    const matchSeg = !seguimiento || (seguimiento === "Si" && seg);
+    return matchQ && matchM && matchN && matchE && matchSeg;
+  });
+
+  renderTabla(filtered);
+}
+
+/* ============================================================
+   FORMS INLINE — POST AL WEB APP
+   ============================================================ */
+async function postData(payload){
+  const res = await fetch(WEBAPP_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+  return await res.json();
+}
+
+function showMsg(id, tipo, texto){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.className = "form-msg " + tipo;
+  el.textContent = texto;
+  if(tipo === "ok") setTimeout(() => { el.className = "form-msg"; el.textContent = ""; }, 3000);
+}
+
+/* ── Asistencias ─────────────────────────────────────────── */
+function toggleFormAsistencia(){
+  const f = document.getElementById("formAsistencia");
+  const isOpen = f.classList.contains("open");
+  f.classList.toggle("open");
+  if(!isOpen){
+    // Poblar checkboxes con INEA activas
+    const ineaActivas = INSCRITOS.filter(d =>
+      (d.Modalidad||"").toUpperCase() === "INEA" && (d.Estado||"").toLowerCase() === "activo"
+    );
+    document.getElementById("fa_checkboxes").innerHTML = ineaActivas.map(d => `
+      <label>
+        <input type="checkbox" value="${d.Nombre}">
+        ${d.Nombre}
+      </label>`).join("");
+  }
+}
+
+async function guardarAsistencia(){
+  const fecha = document.getElementById("fa_fecha").value;
+  const tema  = document.getElementById("fa_tema").value.trim();
+  if(!fecha || !tema){ showMsg("fa_msg","err","Fecha y tema son obligatorios."); return; }
+
+  const checks = document.querySelectorAll("#fa_checkboxes input[type=checkbox]:checked");
+  const asistentes = Array.from(checks).map(c => c.value);
+
+  const btn = document.querySelector("#formAsistencia .btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+
+  try{
+    const r = await postData({
+      tipo: "asistencia", fecha, tema,
+      asistentes,
+      notas: document.getElementById("fa_notas").value.trim()
+    });
+    if(r.ok){
+      showMsg("fa_msg","ok","Asistencia registrada correctamente.");
+      document.getElementById("fa_fecha").value = "";
+      document.getElementById("fa_tema").value  = "";
+      document.getElementById("fa_notas").value = "";
+      checks.forEach(c => c.checked = false);
+      // Recargar asistencias
+      fetchSheetTab(TABS.asistencias).then(a => {
+        ASISTENCIAS = a.filter(x => x.Fecha_Clase && x.Fecha_Clase.trim() !== "");
+        renderCards("ineaGrid","INEA");
+      });
+    } else {
+      showMsg("fa_msg","err","Error: " + r.error);
+    }
+  } catch(e){
+    showMsg("fa_msg","err","No se pudo conectar con el servidor.");
+  } finally{
+    btn.disabled = false; btn.textContent = "Guardar";
+  }
+}
+
+/* ── Exámenes ────────────────────────────────────────────── */
+function toggleFormExamen(formId){
+  const f = document.getElementById(formId);
+  if(!f) return;
+  document.querySelectorAll(".inline-form").forEach(el => {
+    if(el.id !== "formAsistencia" && el.id !== formId) el.classList.remove("open");
+  });
+  f.classList.toggle("open");
+}
+
+async function guardarExamen(formId, nombreEnc, modalidad){
+  const nombre    = decodeURIComponent(nombreEnc);
+  const tipo      = document.getElementById(formId+"_tipo").value;
+  const tema      = document.getElementById(formId+"_tema").value.trim();
+  const fecha     = document.getElementById(formId+"_fecha").value;
+  const resultado = document.getElementById(formId+"_resultado").value;
+
+  if(!tipo || !tema || !fecha || !resultado){
+    showMsg(formId+"_msg","err","Completa los campos obligatorios."); return;
+  }
+
+  const btn = document.querySelector(`#${formId} .btn-guardar`);
+  btn.disabled = true; btn.textContent = "Guardando…";
+
+  try{
+    const r = await postData({
+      tipo: "examen", nombre, modalidad,
+      tipoExamen:   tipo,
+      tema, fecha, resultado,
+      calificacion: document.getElementById(formId+"_cal").value,
+      notas:        document.getElementById(formId+"_notas").value.trim()
+    });
+    if(r.ok){
+      showMsg(formId+"_msg","ok","Examen registrado correctamente.");
+      ["_tipo","_tema","_fecha","_resultado","_cal","_notas"].forEach(s => {
+        const el = document.getElementById(formId+s);
+        if(el) el.value = "";
+      });
+      fetchSheetTab(TABS.examenes).then(e => {
+        EXAMENES = e.filter(x => x.Nombre && x.Nombre.trim() !== "");
+        renderCards("ineaGrid","INEA");
+        renderCards("uvlGrid","UVL");
+      });
+    } else {
+      showMsg(formId+"_msg","err","Error: " + r.error);
+    }
+  } catch(e){
+    showMsg(formId+"_msg","err","No se pudo conectar con el servidor.");
+  } finally{
+    btn.disabled = false; btn.textContent = "Guardar";
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+async function init(){
+  try{
+    const [inscritos, asistencias, examenes, copys, concentrado] = await Promise.all([
+      fetchSheetTab(TABS.inscritos),
+      fetchSheetTab(TABS.asistencias),
+      fetchSheetTab(TABS.examenes),
+      fetchSheetTab(TABS.copys),
+      fetchConcentrado()
+    ]);
+
+    INSCRITOS   = inscritos.filter(d => d.Nombre && d.Nombre.trim() !== "");
+    ASISTENCIAS = asistencias.filter(a => a.Nombre && a.Nombre.trim() !== "");
+    EXAMENES    = examenes.filter(e => e.Nombre && e.Nombre.trim() !== "");
+    COPYS       = copys.filter(c => c.Momento && c.Momento.trim() !== "");
+
+    document.getElementById("loadingMsg").style.display = "none";
+    document.getElementById("appContent").style.display = "block";
+    document.getElementById("lastSync").textContent =
+      "actualizado: " + new Date().toLocaleString("es-MX", { dateStyle:"medium", timeStyle:"short" });
+
+    renderMetrics();
+    renderStats(concentrado);
+    renderCards("ineaGrid", "INEA");
+    renderCards("uvlGrid",  "UVL");
+    applyFilters();
+
+    document.getElementById("fSearch").addEventListener("input", applyFilters);
+    document.getElementById("fModalidad").addEventListener("change", applyFilters);
+    document.getElementById("fNivel").addEventListener("change", applyFilters);
+    document.getElementById("fEstado").addEventListener("change", applyFilters);
+    document.getElementById("fSeguimiento").addEventListener("change", applyFilters);
+
+  } catch(err){
+    console.error("❌ ERROR en init:", err.message, err.stack);
+    document.getElementById("loadingMsg").style.display = "none";
+    const eb = document.getElementById("errorMsg");
+    eb.style.display = "block";
+    eb.textContent = "No se pudieron cargar los datos desde Google Sheets. Verifica que el Sheet esté compartido como 'Cualquier persona con el enlace puede ver' y que los nombres de las pestañas coincidan (EG_Inscritos, EG_Asistencias, EG_Examenes, EG_Copys).";
+  }
+}
+
+init();
+</script>
+</body>
+</html>

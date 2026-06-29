@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel GEB Iniciativas Humanas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0B2545; --gold:#C49B4C; --bg:#F7F5F0; --card:#FFFFFF;
+    --text:#1C2A3A; --text-soft:#5C6B7A; --border:#E3E1D9;
+    --green-bg:#EAF3DE; --green-text:#3B6D11;
+    --amber-bg:#FAEEDA; --amber-text:#854F0B;
+    --gray-bg:#F1EFE8; --gray-text:#5F5E5A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px;}
+
+  .topbar{background:var(--blue);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+  .topbar .brand{display:flex;align-items:center;gap:10px;}
+  .topbar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .topbar .brand-text{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;}
+  .topbar .meta{font-size:12px;color:#C9D3DF;}
+
+  header.page-header{display:flex;align-items:baseline;justify-content:space-between;margin:28px 0 24px;flex-wrap:wrap;gap:10px;border-bottom:2px solid var(--gold);padding-bottom:16px;}
+  header.page-header h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--blue);}
+  header.page-header .sub{color:var(--text-soft);font-size:13px;}
+
+  /* métricas */
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+  .metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .metric .val{font-size:28px;font-weight:700;color:var(--blue);line-height:1.1;}
+  .metric .lbl{font-size:12px;color:var(--text-soft);margin-top:5px;}
+
+  /* buscador */
+  .search-section{margin-bottom:28px;}
+  .search-wrap{position:relative;max-width:480px;}
+  .search-wrap input{width:100%;font-size:14px;font-family:inherit;padding:11px 16px 11px 40px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text);}
+  .search-wrap input:focus{outline:none;border-color:var(--gold);}
+  .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-soft);font-size:16px;pointer-events:none;}
+  .profile-card{margin-top:12px;background:var(--card);border:1.5px solid var(--gold);border-radius:14px;padding:18px;max-width:600px;display:none;}
+  .profile-card.visible{display:block;}
+  .profile-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .profile-avatar{width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
+  .profile-name{font-size:17px;font-weight:700;color:var(--blue);}
+  .profile-meta{font-size:12px;color:var(--text-soft);margin-top:2px;}
+  .profile-badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;}
+  .badge.si{background:var(--green-bg);color:var(--green-text);}
+  .badge.no{background:var(--gray-bg);color:var(--gray-text);opacity:.7;}
+  .no-results{font-size:13px;color:var(--text-soft);padding:10px 0;}
+
+  /* desglose por iniciativa */
+  .breakdown-section{margin-bottom:32px;}
+  .breakdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .bk-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+  .bk-name{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:12px;}
+  .bk-label{font-size:10px;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;}
+  .stacked-bar{height:9px;border-radius:99px;overflow:hidden;display:flex;margin-bottom:8px;background:var(--bg);}
+  .stacked-bar div{height:100%;}
+  .bar-legend{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;}
+  .bar-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-soft);}
+  .bar-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .bar-pct{margin-left:auto;font-weight:600;color:var(--text);font-size:10px;}
+
+  /* áreas e iniciativas — layout 4 columnas */
+  .areas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+  .area-col{display:flex;flex-direction:column;gap:12px;}
+  .area-col-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--blue);padding-bottom:8px;border-bottom:2px solid var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .area-col-title .bar{width:3px;height:14px;background:var(--gold);border-radius:2px;display:inline-block;}
+  .ini-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s,border-color .15s;}
+  .ini-card.active{cursor:pointer;}
+  .ini-card.active:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(11,37,69,0.08);border-color:var(--gold);}
+  .ini-card.disabled{opacity:.55;}
+  .ini-name{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:6px;}
+  .ini-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;margin-bottom:10px;}
+  .ini-status.live{background:var(--green-bg);color:var(--green-text);}
+  .ini-status.soon{background:var(--gray-bg);color:var(--gray-text);}
+  .ini-stat{font-size:12px;color:var(--text-soft);}
+  .ini-stat strong{color:var(--text);font-weight:600;}
+  .ini-arrow{position:absolute;top:14px;right:14px;color:var(--gold);font-size:16px;opacity:0;transition:opacity .15s,transform .15s;}
+  .ini-card.active:hover .ini-arrow{opacity:1;transform:translateX(3px);}
+
+  footer.page-footer{text-align:center;padding:30px 20px;color:var(--text-soft);font-size:12px;border-top:1px solid var(--border);margin-top:20px;}
+  @media(max-width:720px){
+    .metric-grid{grid-template-columns:repeat(2,1fr);}
+    .breakdown-grid{grid-template-columns:1fr 1fr;}
+    .areas-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span><span class="brand-text">GEB University — Iniciativas Humanas</span></div>
+  <div class="meta">Panel interno</div>
+</div>
+
+<div class="wrap">
+
+  <header class="page-header">
+    <div>
+      <h1>Vista general</h1>
+      <div class="sub" id="headerSub">cargando datos…</div>
+    </div>
+  </header>
+
+  <!-- MÉTRICAS -->
+  <div class="metric-grid">
+    <div class="metric"><div class="val" id="mTotal">—</div><div class="lbl">colaboradores totales</div></div>
+    <div class="metric"><div class="val" id="mDonadores">—</div><div class="lbl">donadores registrados</div></div>
+    <div class="metric"><div class="val">8</div><div class="lbl">iniciativas activas</div></div>
+    <div class="metric"><div class="val">1</div><div class="lbl">con CRM operativo</div></div>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="search-section">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar colaborador por nombre…" oninput="buscarColaborador()">
+    </div>
+    <div class="profile-card" id="profileCard"></div>
+    <div id="noResults" class="no-results" style="display:none;">Sin resultados para esa búsqueda.</div>
+  </div>
+
+  <!-- DESGLOSE POR INICIATIVA -->
+  <div class="breakdown-section">
+    <div class="area-title"><span class="bar"></span>Participación por iniciativa</div>
+    <div class="breakdown-grid" id="breakdownGrid">
+      <div class="bk-card" style="opacity:.4;font-size:13px;color:var(--text-soft);">Cargando datos…</div>
+    </div>
+  </div>
+
+  <!-- 4 ÁREAS EN COLUMNAS -->
+  <div class="areas-grid">
+
+    <div class="area-col">
+      <div class="area-col-title">Bienestar Integral</div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Atención Psicológica</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat" id="statPsic">—</div>
+      </div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Retiros Espirituales</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat" id="statRetiro">—</div>
+      </div>
+    </div>
+
+    <div class="area-col">
+      <div class="area-col-title">Impacto Comunitario</div>
+      <div class="ini-card active" onclick="window.location.href='salvando-vidas.html'">
+        <span class="ini-arrow">→</span>
+        <div class="ini-name">Salvando Vidas</div>
+        <span class="ini-status live">activo</span>
+        <div class="ini-stat" id="statDonadores">—</div>
+      </div>
+    </div>
+
+    <div class="area-col">
+      <div class="area-col-title">Movilidad Social</div>
+      <div class="ini-card active" onclick="window.location.href='escuela-geb.html'">
+        <span class="ini-arrow">→</span>
+        <div class="ini-name">Escuela GEB</div>
+        <span class="ini-status live">activo</span>
+        <div class="ini-stat" id="statEscuela">—</div>
+      </div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Impulso GEB</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat" id="statImpulso">—</div>
+      </div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Beca Educativa GEB</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat">Próximamente disponible</div>
+      </div>
+    </div>
+
+    <div class="area-col">
+      <div class="area-col-title">Habilidades para la Vida</div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Reto Ahorro</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat" id="statAhorro">—</div>
+      </div>
+      <div class="ini-card disabled">
+        <div class="ini-name">Biblioteca GEB</div>
+        <span class="ini-status soon">en construcción</span>
+        <div class="ini-stat">Próximamente disponible</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="page-footer">GEB University · Iniciativas Humanas — Panel interno</footer>
+
+<script>
+const SHEET_ID = "1fS5qeoB1ViuCUP4HOQ1zTJgh4tfWUkObvb5LMr3to5A";
+const PALETTE = ["#0B2545","#C49B4C","#3B6D11","#185FA5","#854F0B","#3C3489","#A32D2D","#5C6B7A","#639922","#EF9F27"];
+let COLABORADORES = [];
+
+function gvizUrl(tab){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+}
+
+async function fetchConcentrado(){
+  const res = await fetch(gvizUrl("Concentrado"));
+  const text = await res.text();
+  const j = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+  const COLS = ["Nombre","Rol","Sucursal","Unidad","Correo","FechaNac","Genero","Tel","Turno",
+                "Psic","PsicFecha","Retiro","RetiroFecha","Impulso","Gen","DiagEdu",
+                "EscuelaGEB","EscuelaEstatus","Donadores","TipoSangre","MesGuardia","Ahorro","AhorroEstatus"];
+  return j.table.rows
+    .filter(r => r && r.c && r.c[0] && r.c[0].v && typeof r.c[0].v === 'string' && r.c[0].v.trim() !== "")
+    .map(r => {
+      const obj = {};
+      COLS.forEach((col, i) => {
+        const cell = r.c ? r.c[i] : null;
+        obj[col] = cell ? (cell.v !== null ? cell.v : "") : "";
+      });
+      return obj;
+    });
+}
+
+function initials(name){
+  const p = (name||"").trim().split(/\s+/);
+  return ((p[0]?.[0]||"")+(p[1]?.[0]||"")).toUpperCase();
+}
+
+function countBy(arr, key){
+  const map = {};
+  arr.forEach(d => {
+    const v = (d[key]||"Sin dato").trim();
+    map[v] = (map[v]||0) + 1;
+  });
+  return map;
+}
+
+function buscarColaborador(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  const card = document.getElementById("profileCard");
+  const noRes = document.getElementById("noResults");
+  if(q.length < 3){ card.classList.remove("visible"); noRes.style.display="none"; return; }
+  const match = COLABORADORES.find(c => (c.Nombre||"").toLowerCase().includes(q));
+  if(!match){ card.classList.remove("visible"); noRes.style.display="block"; return; }
+  noRes.style.display = "none";
+  const iniciativas = [
+    { nombre:"Atención Psicológica", col: match.Psic },
+    { nombre:"Retiros Espirituales",  col: match.Retiro },
+    { nombre:"Salvando Vidas",        col: match.Donadores },
+    { nombre:"Impulso GEB",           col: match.Impulso },
+    { nombre:"Escuela GEB",           col: match.EscuelaGEB },
+    { nombre:"Reto Ahorro",           col: match.Ahorro },
+    { nombre:"Beca Educativa GEB",    col: "" },
+  ];
+  const badges = iniciativas.map(ini => {
+    const activo = (ini.col||"").toString().toLowerCase() === "sí" || (ini.col||"").toString().toLowerCase() === "si";
+    return `<span class="badge ${activo?'si':'no'}">${activo?'✓':'—'} ${ini.nombre}</span>`;
+  }).join("");
+  card.innerHTML = `
+    <div class="profile-head">
+      <div class="profile-avatar">${initials(match.Nombre)}</div>
+      <div>
+        <div class="profile-name">${match.Nombre}</div>
+        <div class="profile-meta">${match.Rol||""} · ${match.Sucursal||""} · ${match.Unidad||""}</div>
+      </div>
+    </div>
+    <div class="profile-badges">${badges}</div>`;
+  card.classList.add("visible");
+}
+
+function updateCardStats(colabs){
+  const stat = (id, col, label) => {
+    const n = colabs.filter(c => (c[col]||"").toLowerCase()==="sí"||(c[col]||"").toLowerCase()==="si").length;
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<strong>${n}</strong> ${label}`;
+  };
+  stat("statPsic","Psic","inscritos");
+  stat("statRetiro","Retiro","inscritos");
+  stat("statEscuela","EscuelaGEB","inscritos");
+  stat("statImpulso","Impulso","inscritos");
+  stat("statAhorro","Ahorro","inscritos");
+  stat("statDonadores","Donadores","donadores registrados");
+  const nDon = colabs.filter(c => (c.Donadores||"").toLowerCase()==="sí"||(c.Donadores||"").toLowerCase()==="si").length;
+  const mDon = document.getElementById("mDonadores");
+  if(mDon) mDon.textContent = nDon;
+}
+
+function renderBreakdown(colabs){
+  const iniciativas = [
+    { nombre:"Atención Psicológica", col:"Psic" },
+    { nombre:"Retiros Espirituales",  col:"Retiro" },
+    { nombre:"Salvando Vidas",        col:"Donadores" },
+    { nombre:"Impulso GEB",           col:"Impulso" },
+    { nombre:"Escuela GEB",           col:"EscuelaGEB" },
+    { nombre:"Reto Ahorro",           col:"Ahorro" },
+    { nombre:"Beca Educativa GEB",    col:"" },
+    { nombre:"Biblioteca GEB",        col:"" },
+  ];
+  const genColors = {"Mujer":"#C49B4C","Hombre":"#0B2545","Sin dato":"#5C6B7A"};
+  const grid = document.getElementById("breakdownGrid");
+  grid.innerHTML = iniciativas.map(ini => {
+    const inscritos = ini.col
+      ? colabs.filter(c => { const v=(c[ini.col]||"").toString().toLowerCase(); return v==="sí"||v==="si"; })
+      : [];
+    if(inscritos.length === 0){
+      return `<div class="bk-card">
+        <div class="bk-name">${ini.nombre}</div>
+        <div style="font-size:11px;color:var(--text-soft);">Sin datos disponibles</div>
+      </div>`;
+    }
+    const unidadEntries = Object.entries(countBy(inscritos,"Unidad")).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const uTotal = inscritos.length;
+    const uBar = unidadEntries.map(([l,n],i)=>`<div style="width:${Math.round(n/uTotal*100)}%;background:${PALETTE[i%PALETTE.length]};"></div>`).join("");
+    const uLeg = unidadEntries.map(([l,n],i)=>`<div class="bar-legend-item"><span class="bar-dot" style="background:${PALETTE[i%PALETTE.length]};"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l||"Sin dato"}</span><span class="bar-pct">${Math.round(n/uTotal*100)}%</span></div>`).join("");
+    const genEntries = Object.entries(countBy(inscritos,"Genero")).sort((a,b)=>b[1]-a[1]);
+    const gTotal = inscritos.length;
+    const gBar = genEntries.map(([l,n])=>`<div style="width:${Math.round(n/gTotal*100)}%;background:${genColors[l]||"#888"};"></div>`).join("");
+    const gLeg = genEntries.map(([l,n])=>`<div class="bar-legend-item"><span class="bar-dot" style="background:${genColors[l]||"#888"};"></span><span style="flex:1;">${l||"Sin dato"}</span><span class="bar-pct">${Math.round(n/gTotal*100)}%</span></div>`).join("");
+    return `<div class="bk-card">
+      <div class="bk-name">${ini.nombre} <span style="font-size:11px;font-weight:400;color:var(--text-soft);">(${uTotal})</span></div>
+      <div class="bk-label">unidad de negocio</div>
+      <div class="stacked-bar">${uBar}</div>
+      <div class="bar-legend">${uLeg}</div>
+      <div class="bk-label">género</div>
+      <div class="stacked-bar">${gBar}</div>
+      <div class="bar-legend">${gLeg}</div>
+    </div>`;
+  }).join("");
+}
+
+async function init(){
+  try{
+    COLABORADORES = await fetchConcentrado();
+    document.getElementById("mTotal").textContent = COLABORADORES.length;
+    document.getElementById("headerSub").textContent = `${COLABORADORES.length} colaboradores · 8 iniciativas · 4 enfoques`;
+    updateCardStats(COLABORADORES);
+    renderBreakdown(COLABORADORES);
+  } catch(err){
+    console.error("Error:", err);
+    document.getElementById("headerSub").textContent = "Error al cargar datos";
+  }
+}
+init();
+</script>
+</body>
+</html>
