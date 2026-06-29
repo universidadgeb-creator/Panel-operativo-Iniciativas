@@ -469,6 +469,45 @@
       </div>
     </div>
 
+    <!-- HISTORIAL: ASISTENCIAS -->
+    <div class="section-divider">
+      <span class="divider-label">Historial de asistencias</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fAsistSearch" placeholder="buscar nombre…" style="width:200px;">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Colaborador</th><th>Fecha clase</th><th>Tema</th><th>¿Asistió?</th><th>Notas</th></tr></thead>
+          <tbody id="asistBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HISTORIAL: EXÁMENES -->
+    <div class="section-divider">
+      <span class="divider-label">Historial de exámenes</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fExamSearch" placeholder="buscar nombre…" style="width:200px;">
+        <select id="fExamResultado">
+          <option value="">todos los resultados</option>
+          <option value="Aprobado">Aprobado</option>
+          <option value="Reprobado">Reprobado</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Colaborador</th><th>Modalidad</th><th>Tipo</th><th>Tema / Materia</th><th>Fecha</th><th>Resultado</th><th>Calificación</th><th>Notas</th></tr></thead>
+          <tbody id="examBody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div><!-- /appContent -->
 </div><!-- /wrap -->
 
@@ -1060,6 +1099,81 @@ function abrirCopyDirecto(nombreEnc, momentoEnc){
 /* ============================================================
    FILTROS
    ============================================================ */
+/* ============================================================
+   RENDER: HISTORIAL ASISTENCIAS
+   ============================================================ */
+function renderAsistencias(filtered){
+  var body = document.getElementById("asistBody");
+  if(!filtered || filtered.length === 0){
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-soft);">Sin registros de asistencia</td></tr>';
+    return;
+  }
+  var html = "";
+  filtered.forEach(function(a){
+    var asist = (a.Asistio||"").toLowerCase();
+    var pill = (asist === "sí" || asist === "si")
+      ? '<span class="pill activo">Sí</span>'
+      : '<span class="pill inactivo">'+(a.Asistio||"—")+'</span>';
+    html += '<tr>'
+      + '<td style="font-weight:600;">'+a.Nombre+'</td>'
+      + '<td>'+(a.Fecha_Clase||"—")+'</td>'
+      + '<td>'+(a.Tema||"—")+'</td>'
+      + '<td>'+pill+'</td>'
+      + '<td style="font-size:12px;color:var(--text-soft);">'+(a.Notas||"")+'</td>'
+      + '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function applyAsistFilters(){
+  var q = document.getElementById("fAsistSearch").value.trim().toLowerCase();
+  var filtered = ASISTENCIAS.filter(function(a){
+    return !q || (a.Nombre||"").toLowerCase().indexOf(q) >= 0;
+  });
+  renderAsistencias(filtered);
+}
+
+/* ============================================================
+   RENDER: HISTORIAL EXÁMENES
+   ============================================================ */
+function renderExamenes(filtered){
+  var body = document.getElementById("examBody");
+  if(!filtered || filtered.length === 0){
+    body.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-soft);">Sin registros de exámenes</td></tr>';
+    return;
+  }
+  var html = "";
+  filtered.forEach(function(e){
+    var resPill = (e.Resultado||"").toLowerCase() === "aprobado"
+      ? '<span class="pill activo">Aprobado</span>'
+      : (e.Resultado||"").toLowerCase() === "reprobado"
+        ? '<span class="pill baja">Reprobado</span>'
+        : '<span class="pill inactivo">'+(e.Resultado||"—")+'</span>';
+    html += '<tr>'
+      + '<td style="font-weight:600;">'+e.Nombre+'</td>'
+      + '<td>'+(e.Modalidad||"—")+'</td>'
+      + '<td>'+(e.Tipo||"—")+'</td>'
+      + '<td>'+(e.Tema_Materia||"—")+'</td>'
+      + '<td>'+(e.Fecha_Examen||"—")+'</td>'
+      + '<td>'+resPill+'</td>'
+      + '<td>'+(e.Calificacion||"—")+'</td>'
+      + '<td style="font-size:12px;color:var(--text-soft);">'+(e.Notas||"")+'</td>'
+      + '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function applyExamFilters(){
+  var q = document.getElementById("fExamSearch").value.trim().toLowerCase();
+  var res = document.getElementById("fExamResultado").value;
+  var filtered = EXAMENES.filter(function(e){
+    var matchQ = !q || (e.Nombre||"").toLowerCase().indexOf(q) >= 0;
+    var matchR = !res || e.Resultado === res;
+    return matchQ && matchR;
+  });
+  renderExamenes(filtered);
+}
+
 function applyFilters(){
   const q          = document.getElementById("fSearch").value.toLowerCase();
   const modalidad  = document.getElementById("fModalidad").value;
@@ -1242,6 +1356,12 @@ async function init(){
     document.getElementById("fNivel").addEventListener("change", applyFilters);
     document.getElementById("fEstado").addEventListener("change", applyFilters);
     document.getElementById("fSeguimiento").addEventListener("change", applyFilters);
+
+    renderAsistencias(ASISTENCIAS);
+    renderExamenes(EXAMENES);
+    document.getElementById("fAsistSearch").addEventListener("input", applyAsistFilters);
+    document.getElementById("fExamSearch").addEventListener("input", applyExamFilters);
+    document.getElementById("fExamResultado").addEventListener("change", applyExamFilters);
 
   } catch(err){
     console.error("❌ ERROR en init:", err.message, err.stack);

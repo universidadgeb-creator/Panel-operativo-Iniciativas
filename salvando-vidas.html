@@ -341,6 +341,41 @@
       </div>
     </div>
 
+    <!-- HISTORIAL DE DONACIONES -->
+    <div class="section-divider">
+      <span class="divider-label">Historial de donaciones</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fHistSearch" placeholder="buscar nombre…" style="width:200px;">
+        <select id="fHistMes">
+          <option value="">todos los meses</option>
+        </select>
+        <select id="fHistDono">
+          <option value="">todos</option>
+          <option value="Sí">donó</option>
+          <option value="No">no donó</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Donador</th>
+              <th>Mes</th>
+              <th>Año</th>
+              <th>¿Donó?</th>
+              <th>Fecha donación</th>
+              <th>Talón</th>
+              <th>Notas</th>
+            </tr>
+          </thead>
+          <tbody id="historialBody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -807,6 +842,63 @@ async function guardarDonacion(formId, nombreEnc){
 }
 
 /* ============================================================
+   RENDER: HISTORIAL DE DONACIONES
+   ============================================================ */
+function renderHistorial(filtered){
+  var body = document.getElementById("historialBody");
+  if(!filtered || filtered.length === 0){
+    body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-soft);">Sin registros en el historial</td></tr>';
+    return;
+  }
+  var html = "";
+  filtered.forEach(function(h){
+    var donoPill = (h.Dono === "Sí")
+      ? '<span class="pill activo">Sí</span>'
+      : '<span class="pill inactivo">'+(h.Dono||"—")+'</span>';
+    var talonPill = "";
+    if(h.Talon_Recibido === "Sí") talonPill = '<span class="pill activo">Sí</span>';
+    else if(h.Talon_Recibido === "Pendiente") talonPill = '<span class="pill seguimiento-tag">Pendiente</span>';
+    else talonPill = '<span style="color:var(--text-soft);font-size:12px;">—</span>';
+    html += '<tr>'
+      + '<td style="font-weight:600;">'+h.Nombre+'</td>'
+      + '<td>'+(h.Mes||"—")+'</td>'
+      + '<td>'+(h.Año||"—")+'</td>'
+      + '<td>'+donoPill+'</td>'
+      + '<td>'+(h.Fecha_Donacion||"—")+'</td>'
+      + '<td>'+talonPill+'</td>'
+      + '<td style="font-size:12px;color:var(--text-soft);">'+(h.Notas||"")+'</td>'
+      + '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function applyHistorialFilters(){
+  var q = document.getElementById("fHistSearch").value.trim().toLowerCase();
+  var mes = document.getElementById("fHistMes").value;
+  var dono = document.getElementById("fHistDono").value;
+  var filtered = HISTORIAL.filter(function(h){
+    var matchQ = !q || (h.Nombre||"").toLowerCase().indexOf(q) >= 0;
+    var matchM = !mes || (h.Mes||"").toLowerCase() === mes.toLowerCase();
+    var matchD = !dono || h.Dono === dono;
+    return matchQ && matchM && matchD;
+  });
+  renderHistorial(filtered);
+}
+
+function initHistorialFilters(){
+  var sel = document.getElementById("fHistMes");
+  MESES.forEach(function(m){
+    var opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m.charAt(0).toUpperCase() + m.slice(1);
+    sel.appendChild(opt);
+  });
+  document.getElementById("fHistSearch").addEventListener("input", applyHistorialFilters);
+  document.getElementById("fHistMes").addEventListener("change", applyHistorialFilters);
+  document.getElementById("fHistDono").addEventListener("change", applyHistorialFilters);
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 async function init(){
@@ -835,6 +927,9 @@ async function init(){
     renderGuardias();
     console.log("🔵 applyFilters...");
     applyFilters();
+    console.log("🔵 historial...");
+    initHistorialFilters();
+    renderHistorial(HISTORIAL);
     console.log("🟢 render completo");
 
     document.getElementById("fSearch").addEventListener("input", applyFilters);
