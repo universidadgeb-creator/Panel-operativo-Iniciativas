@@ -387,8 +387,14 @@ async function fetchSheetTab(tabName){
   const data = JSON.parse(jsonStr);
   const headers = SCHEMA[tabName];
 
+  const schemaSet = new Set(headers.map(h => h.toLowerCase()));
   return data.table.rows
     .filter(r => r && r.c && r.c.some(cell => cell && cell.v !== null && cell.v !== ""))
+    .filter(r => {
+      const firstVal = r.c && r.c[0] ? String(r.c[0].v || "").trim() : "";
+      if(firstVal.startsWith("#") || schemaSet.has(firstVal.toLowerCase())) return false;
+      return true;
+    })
     .map(r => {
       const obj = {};
       headers.forEach((col, i) => {
