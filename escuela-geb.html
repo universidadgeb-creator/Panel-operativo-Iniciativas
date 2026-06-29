@@ -1411,10 +1411,16 @@ async function init(){
     CONCENTRADO_DATA = concentrado;
 
     // Inyectar históricos del Concentrado como inscritos inactivos INEA
+    // Solo gente con valor en col Q que NO esté ya en EG_Inscritos
+    var nombresInscritos = {};
+    INSCRITOS.forEach(function(ins){
+      nombresInscritos[(ins.Nombre||"").trim().toLowerCase()] = true;
+    });
     concentrado.forEach(function(d){
-      if(!d.historico) return;
-      var yaExiste = INSCRITOS.some(function(ins){ return ins.Nombre === d.nombre; });
-      if(yaExiste) return;
+      var hVal = String(d.historico||"").trim().toLowerCase();
+      if(hVal !== "historico" && hVal !== "histórico") return;
+      var norm = (d.nombre||"").trim().toLowerCase();
+      if(!norm || nombresInscritos[norm]) return;
       INSCRITOS.push({
         Nombre: d.nombre || "",
         Sucursal: "",
