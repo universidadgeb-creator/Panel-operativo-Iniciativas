@@ -215,7 +215,7 @@ async function fetchConcentrado(){
   const j = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
   const COLS = ["Nombre","Rol","Sucursal","Unidad","Correo","FechaNac","Genero","Tel","Turno",
                 "Psic","PsicFecha","Retiro","RetiroFecha","Impulso","Gen","DiagEdu",
-                "EscuelaGEB","EscuelaEstatus","Donadores","TipoSangre","MesGuardia","Ahorro","AhorroEstatus"];
+                "EscuelaGEB","EscuelaEstatus","_ColS","Donadores","TipoSangre","MesGuardia","Ahorro","AhorroEstatus"];
   return j.table.rows
     .filter(r => r && r.c && r.c[0] && r.c[0].v && typeof r.c[0].v === 'string' && r.c[0].v.trim() !== "")
     .map(r => {
