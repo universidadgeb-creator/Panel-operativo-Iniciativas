@@ -365,7 +365,7 @@ function urgPill(u){
 function estadoPill(e){
   var v=(e||"").toLowerCase();
   if(v==="activo")return'<span class="pill activo">Activo</span>';
-  if(v==="lista de espera")return'<span class="pill espera">Lista de espera</span>';
+  if(v.startsWith("lista"))return'<span class="pill espera">Lista de espera</span>';
   if(v==="sesión pendiente"||v==="sesion pendiente")return'<span class="pill pendiente">Sesión pendiente</span>';
   if(v==="completó"||v==="completo")return'<span class="pill completo">Completó</span>';
   if(v==="histórico"||v==="historico")return'<span class="pill historico">Histórico</span>';
@@ -377,7 +377,7 @@ function estadoPill(e){
 function getMomentosELA(d){
   var e=(d.Estado||"").toLowerCase();
   if(isSeguimiento(d))return["ELA_ListaEspera"];
-  if(e==="lista de espera")return["ELA_ListaEspera","ELA_ListaEsperaStatus","ELA_LugarDisponible"];
+  if(e.startsWith("lista"))return["ELA_ListaEspera","ELA_ListaEsperaStatus","ELA_LugarDisponible"];
   if(e==="activo"||e==="sesión pendiente"||e==="sesion pendiente")return["ELA_Recordatorio","ELA_Inasistencia","ELA_CambioModalidad"];
   if(e==="completó"||e==="completo")return["ELA_Cierre"];
   return[];
@@ -410,7 +410,7 @@ function progressBar(tomadas,total){
 function renderElaMetrics(){
   var ela=INSCRITOS.filter(function(d){return(d.Modalidad_Servicio||"").toUpperCase()==="ELA";});
   var activos=ela.filter(function(d){var e=(d.Estado||"").toLowerCase();return e==="activo"||e==="sesión pendiente"||e==="sesion pendiente";});
-  var espera=ela.filter(function(d){return(d.Estado||"").toLowerCase()==="lista de espera";});
+  var espera=ela.filter(function(d){return(d.Estado||"").toLowerCase().startsWith("lista");});
   var completaron=ela.filter(function(d){var e=(d.Estado||"").toLowerCase();return e==="completó"||e==="completo";});
   var seg=ela.filter(isSeguimiento);
   var ocupadas=activos.length;
@@ -457,7 +457,7 @@ function renderElaActivos(){
 function renderElaEspera(){
   var copyMap=buildCopyMap();
   var espera=INSCRITOS.filter(function(d){
-    return(d.Modalidad_Servicio||"").toUpperCase()==="ELA"&&(d.Estado||"").toLowerCase()==="lista de espera";
+    return(d.Modalidad_Servicio||"").toUpperCase()==="ELA"&&(d.Estado||"").toLowerCase().startsWith("lista");
   }).sort(function(a,b){
     var ord={alta:0,media:1,baja:2};
     return(ord[(a.Urgencia||"baja").toLowerCase()]||2)-(ord[(b.Urgencia||"baja").toLowerCase()]||2);
