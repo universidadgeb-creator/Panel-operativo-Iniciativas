@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reto Ahorro — GEB Iniciativas Humanas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0B2545; --gold:#C49B4C; --bg:#F7F5F0; --card:#FFFFFF;
+    --text:#1C2A3A; --text-soft:#5C6B7A; --border:#E3E1D9;
+    --green-bg:#EAF3DE; --green-text:#3B6D11;
+    --amber-bg:#FAEEDA; --amber-text:#854F0B;
+    --gray-bg:#F1EFE8; --gray-text:#5F5E5A;
+    --red-bg:#FCEBEB; --red-text:#A32D2D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px;}
+
+  .topbar{background:var(--blue);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+  .topbar .brand{display:flex;align-items:center;gap:10px;}
+  .topbar .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .topbar .brand-text{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;letter-spacing:.01em;}
+  .topbar .meta{font-size:12px;color:#C9D3DF;}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--text-soft);text-decoration:none;margin-bottom:14px;}
+  .back-link:hover{color:var(--blue);}
+
+  header.page-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:10px;border-bottom:2px solid var(--gold);padding-bottom:16px;}
+  header.page-header h1{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--blue);}
+  header.page-header .sub{color:var(--text-soft);font-size:13px;}
+
+  .metric-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+  .metric{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .metric.alert{background:var(--amber-bg);border-color:#f0d39a;}
+  .metric .val{font-size:26px;font-weight:700;color:var(--blue);line-height:1.1;}
+  .metric.alert .val{color:var(--amber-text);}
+  .metric .lbl{font-size:12px;color:var(--text-soft);margin-top:4px;}
+  .metric.alert .lbl{color:var(--amber-text);}
+
+  .section{margin-bottom:30px;}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--blue);margin-bottom:12px;}
+  .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 20px;}
+  .section-divider .divider-label{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--blue);white-space:nowrap;}
+  .section-divider .divider-line{flex:1;height:1px;background:var(--border);}
+
+  .copy-highlight{background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:18px;margin-bottom:28px;}
+  .copy-highlight-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+  .copy-highlight-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--blue);}
+  .copy-highlight-meta{font-size:12px;color:var(--text-soft);}
+  .copy-highlight-text{font-size:13.5px;line-height:1.6;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;white-space:pre-wrap;margin-top:8px;}
+  .copy-highlight-note{font-size:11px;color:var(--text-soft);margin-top:8px;}
+
+  .guardia-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+  .gcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .gcard.seguimiento{border-color:var(--gold);background:#FFFBF1;}
+  .gcard-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--amber-bg);color:var(--amber-text);font-weight:700;font-size:13px;}
+  .gname{font-weight:600;font-size:14px;color:var(--text);}
+  .gsuc{font-size:12px;color:var(--text-soft);}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;margin-right:4px;margin-bottom:6px;}
+  .pill.activo{background:var(--green-bg);color:var(--green-text);}
+  .pill.baja{background:var(--red-bg);color:var(--red-text);}
+  .pill.inactivo{background:var(--gray-bg);color:var(--gray-text);}
+  .pill.seguimiento-tag{background:var(--amber-bg);color:var(--amber-text);}
+  .pill.semana{background:var(--amber-bg);color:var(--amber-text);}
+
+  .gactions{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .wa-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text-soft);background:#F4F3EE;border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;text-align:left;transition:background .15s;}
+  .wa-btn:hover{background:#E9E7DF;}
+  .wa-btn .ic{color:#25D366;font-weight:700;}
+  .atender-btn{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--amber-text);background:var(--amber-bg);border:1px solid #f0d39a;border-radius:8px;padding:6px 10px;cursor:pointer;margin-top:4px;}
+  .atender-btn:hover{background:#f5e2bd;}
+
+  .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .filters input,.filters select{font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;}
+  .filters input{width:220px;}
+
+  .table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:11px;font-weight:700;color:var(--text-soft);padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.seguimiento-row{background:#FFFBF1;}
+  .name-cell{display:flex;align-items:center;gap:8px;}
+  .dot-new{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+
+  .expand-row td{padding:0 !important;}
+  .copy-panel{display:none;background:#FAF9F5;padding:16px 18px;border-top:1px dashed var(--border);}
+  .copy-panel.open{display:block;}
+  .copy-inner{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;}
+  .copy-label{font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
+  .copy-text{font-size:13.5px;line-height:1.6;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;white-space:pre-wrap;}
+  .momento-title{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:8px;}
+  .open-wa{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;white-space:nowrap;}
+  .open-wa:hover{background:#1fb958;}
+
+  .footnote{font-size:11.5px;color:var(--text-soft);display:flex;align-items:center;gap:6px;padding:12px 4px;}
+  .loading,.errorbox{text-align:center;padding:40px;color:var(--text-soft);font-size:14px;}
+  .errorbox{color:var(--red-text);}
+
+  @media(max-width:720px){
+    .metric-grid{grid-template-columns:repeat(2,1fr);}
+    .copy-inner{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span><span class="brand-text">GEB University — Iniciativas Humanas</span></div>
+  <div class="meta">Panel interno</div>
+</div>
+
+<div class="wrap">
+
+  <a href="index.html" class="back-link">← volver al panel general</a>
+
+  <header class="page-header">
+    <div>
+      <h1>Reto Ahorro</h1>
+      <div class="sub">GEB Iniciativas Humanas — Habilidades para la Vida</div>
+    </div>
+    <div class="sub" id="lastSync">cargando datos...</div>
+  </header>
+
+  <div id="loadingMsg" class="loading">Cargando datos desde Google Sheets…</div>
+  <div id="errorMsg" class="errorbox" style="display:none;"></div>
+
+  <div id="appContent" style="display:none;">
+
+    <!-- JOURNEY MAP -->
+    <div class="section" style="margin-bottom:28px;">
+      <div class="section-title" style="margin-bottom:14px;">Ruta del colaborador</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;overflow-x:auto;display:flex;justify-content:center;">
+        <svg viewBox="0 0 620 200" role="img" style="width:600px;max-width:100%;">
+          <title>Journey del colaborador — Reto Ahorro</title>
+          <defs>
+            <marker id="jarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <!-- Interés -->
+          <rect x="10" y="72" width="72" height="36" rx="6" fill="#F3EEF8" stroke="#5B2D8E" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#3D1A6E" x="46" y="90" text-anchor="middle" dominant-baseline="central">Interés</text>
+          <line x1="82" y1="90" x2="96" y2="90" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <!-- Inscripción -->
+          <rect x="96" y="72" width="72" height="36" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#633806" x="132" y="90" text-anchor="middle" dominant-baseline="central">Inscripción</text>
+          <line x1="168" y1="90" x2="182" y2="90" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <!-- Copy semanal -->
+          <rect x="182" y="72" width="72" height="36" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#27500A" x="218" y="84" text-anchor="middle" dominant-baseline="central">Copy</text>
+          <text font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#27500A" x="218" y="98" text-anchor="middle" dominant-baseline="central">semanal</text>
+          <line x1="254" y1="90" x2="268" y2="90" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <!-- Ciclo semanal -->
+          <path d="M218 72 Q218 54 218 48 Q218 42 182 42 Q160 42 160 54 Q160 72 182 72" fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#jarrow)"/>
+          <text font-family="DM Sans,sans-serif" font-size="8" fill="#5F5E5A" x="190" y="38" text-anchor="middle">cada semana</text>
+
+          <!-- Reacción -->
+          <rect x="268" y="72" width="72" height="36" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#0C447C" x="304" y="90" text-anchor="middle" dominant-baseline="central">Reacción</text>
+          <line x1="340" y1="90" x2="354" y2="90" stroke="#888780" stroke-width="1" marker-end="url(#jarrow)"/>
+
+          <!-- Bono -->
+          <rect x="354" y="72" width="72" height="36" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#633806" x="390" y="90" text-anchor="middle" dominant-baseline="central">Bono</text>
+          <line x1="426" y1="90" x2="440" y2="90" stroke="#888780" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#jarrow)"/>
+
+          <!-- Cierre anual -->
+          <rect x="440" y="72" width="72" height="36" rx="6" fill="#0B2545" stroke="#0B2545" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#C49B4C" x="476" y="84" text-anchor="middle" dominant-baseline="central">Cierre</text>
+          <text font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#C9D3DF" x="476" y="98" text-anchor="middle" dominant-baseline="central">anual</text>
+
+          <!-- Baja (rama desde Reacción) -->
+          <path d="M304 108 Q304 130 304 140" fill="none" stroke="#A32D2D" stroke-width="1" marker-end="url(#jarrow)"/>
+          <rect x="268" y="140" width="72" height="36" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="11" font-weight="600" fill="#A32D2D" x="304" y="158" text-anchor="middle" dominant-baseline="central">Baja</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metric-grid" id="metricsGrid"></div>
+
+    <!-- COPY SEMANAL DESTACADO -->
+    <div class="copy-highlight" id="copyHighlight" style="display:none;">
+      <div class="copy-highlight-head">
+        <div class="copy-highlight-title">Copy semanal activo</div>
+        <div class="copy-highlight-meta" id="copyHighlightMeta"></div>
+      </div>
+      <div class="copy-highlight-text" id="copyHighlightText"></div>
+      <div class="copy-highlight-note">Este copy se edita directamente en la pestaña RA_Copys del Google Sheet.</div>
+    </div>
+
+    <!-- CARDS DE ACTIVOS -->
+    <div class="section-divider">
+      <span class="divider-label">Participantes activos</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="guardia-grid" id="activosGrid"></div>
+    </div>
+
+    <!-- TABLA COMPLETA -->
+    <div class="section-divider">
+      <span class="divider-label">Todos los inscritos</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fSearch" placeholder="buscar nombre o sucursal…">
+        <select id="fEstado">
+          <option value="">todos los estados</option>
+          <option value="Activo">Activo</option>
+          <option value="Baja">Baja</option>
+        </select>
+        <select id="fSeguimiento">
+          <option value="">todos</option>
+          <option value="Si">pendientes de seguimiento</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Sucursal</th>
+              <th>Semana</th>
+              <th>Estado</th>
+              <th>Mensajes</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody"></tbody>
+        </table>
+      </div>
+      <div class="footnote">📊 datos y copys desde Google Sheets · se actualizan al recargar la página</div>
+    </div>
+
+    <!-- HISTORIAL DE SEMANAS -->
+    <div class="section-divider">
+      <span class="divider-label">Historial por semana</span>
+      <span class="divider-line"></span>
+    </div>
+    <div class="section">
+      <div class="filters">
+        <input type="text" id="fHistSearch" placeholder="buscar nombre…" style="width:200px;">
+        <select id="fHistSemana"><option value="">todas las semanas</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Colaborador</th><th>Semana</th><th>¿Reaccionó?</th><th>Notas</th></tr></thead>
+          <tbody id="historialBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var SHEET_ID = "1fS5qeoB1ViuCUP4HOQ1zTJgh4tfWUkObvb5LMr3to5A";
+var TABS = {
+  inscritos: "RA_Inscritos",
+  semanas:   "RA_Semanas",
+  copys:     "RA_Copys"
+};
+
+var SCHEMA = {
+  RA_Inscritos: ["Nombre","Sucursal","Telefono_WA","Estado","Semana_Actual","Fecha_Inscripcion","Requiere_Seguimiento"],
+  RA_Semanas:   ["Nombre","Semana","Reacciono","Notas"],
+  RA_Copys:     ["Momento","Copy_Texto","Activo"]
+};
+
+function gvizUrl(tabName){
+  return "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:json&sheet="+encodeURIComponent(tabName);
+}
+
+function formatTel(val){
+  if(!val) return "";
+  var s = String(val).replace(/\.0$/,"").replace(/\D/g,"");
+  if(s.length === 10) return "+52" + s;
+  if(s.length === 12 && s.startsWith("52")) return "+" + s;
+  return s;
+}
+
+function fetchSheetTab(tabName){
+  return fetch(gvizUrl(tabName))
+    .then(function(res){ return res.text(); })
+    .then(function(text){
+      var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+      var headers = SCHEMA[tabName];
+      var schemaSet = {};
+      headers.forEach(function(h){ schemaSet[h.toLowerCase()] = true; });
+      return json.table.rows
+        .filter(function(r){ return r && r.c && r.c.some(function(cell){ return cell && cell.v !== null && cell.v !== ""; }); })
+        .filter(function(r){
+          var firstVal = r.c && r.c[0] ? String(r.c[0].v || "").trim() : "";
+          if(firstVal.startsWith("#") || schemaSet[firstVal.toLowerCase()]) return false;
+          return true;
+        })
+        .map(function(r){
+          var obj = {};
+          headers.forEach(function(col, i){
+            var cell = r.c ? r.c[i] : null;
+            var val = cell ? (cell.f !== undefined && cell.f !== null ? cell.f : cell.v) : "";
+            if(val === null || val === undefined) val = "";
+            if(col === "Telefono_WA") val = formatTel(val);
+            obj[col] = val;
+          });
+          return obj;
+        });
+    });
+}
+
+function initials(name){
+  if(!name) return "?";
+  var parts = name.trim().split(/\s+/);
+  return ((parts[0] ? parts[0][0] : "")+(parts[1] ? parts[1][0] : "")).toUpperCase();
+}
+
+function isSeguimiento(d){
+  var v = (d.Requiere_Seguimiento||"").trim().toLowerCase();
+  return v === "sí" || v === "si" || v === "";
+}
+
+function waLink(telefono, texto){
+  var phone = (telefono||"").replace(/[^\d+]/g,"");
+  return "https://wa.me/"+phone.replace("+","")+"?text="+encodeURIComponent(texto);
+}
+
+function sustituirVariables(texto, d){
+  return (texto||"")
+    .replace(/\{Nombre\}/g, (d.Nombre||"").split(" ")[0])
+    .replace(/\{Semana\}/g, d.Semana_Actual||"");
+}
+
+function getMomentosDisponibles(d){
+  if(isSeguimiento(d)) return ["Bienvenida"];
+  var estado = (d.Estado||"").toLowerCase();
+  if(estado === "baja") return ["Baja voluntaria"];
+  if(estado === "activo") return ["Copy semanal","Anuncio de bono"];
+  return [];
+}
+
+var INSCRITOS = [];
+var SEMANAS = [];
+var COPYS = [];
+
+function buildCopyMap(){
+  var map = {};
+  COPYS.forEach(function(c){
+    var a = (c.Activo||"").toLowerCase();
+    if(a === "sí" || a === "si") map[c.Momento] = c;
+  });
+  return map;
+}
+
+function renderMetrics(){
+  var total = INSCRITOS.length;
+  var activos = INSCRITOS.filter(function(d){ return (d.Estado||"").toLowerCase() === "activo"; }).length;
+  var bajas = INSCRITOS.filter(function(d){ return (d.Estado||"").toLowerCase() === "baja"; }).length;
+  var semanaMax = 0;
+  INSCRITOS.forEach(function(d){
+    if((d.Estado||"").toLowerCase() === "activo"){
+      var s = parseInt(d.Semana_Actual) || 0;
+      if(s > semanaMax) semanaMax = s;
+    }
+  });
+  var seguimiento = INSCRITOS.filter(isSeguimiento).length;
+
+  var metrics = [
+    {val:total, lbl:"inscritos totales", alert:false},
+    {val:activos, lbl:"activos", alert:false},
+    {val:bajas, lbl:"bajas", alert:false},
+    {val:"Sem "+semanaMax, lbl:"semana actual del reto", alert:false},
+    {val:seguimiento, lbl:"pendientes de seguimiento", alert:seguimiento>0}
+  ];
+
+  document.getElementById("metricsGrid").innerHTML = metrics.map(function(m){
+    return '<div class="metric '+(m.alert?'alert':'')+'">'
+      + '<div class="val">'+m.val+'</div>'
+      + '<div class="lbl">'+m.lbl+'</div>'
+      + '</div>';
+  }).join("");
+}
+
+function renderCopyHighlight(){
+  var copyMap = buildCopyMap();
+  var copy = copyMap["Copy semanal"];
+  var box = document.getElementById("copyHighlight");
+  if(!copy){ box.style.display = "none"; return; }
+  var activos = INSCRITOS.filter(function(d){ return (d.Estado||"").toLowerCase() === "activo" && !isSeguimiento(d); }).length;
+  document.getElementById("copyHighlightText").textContent = copy.Copy_Texto || "";
+  document.getElementById("copyHighlightMeta").textContent = activos + " colaboradores activos para envío";
+  box.style.display = "block";
+}
+
+function renderCards(){
+  var copyMap = buildCopyMap();
+  var activos = INSCRITOS.filter(function(d){
+    return (d.Estado||"").toLowerCase() === "activo";
+  });
+  var grid = document.getElementById("activosGrid");
+  if(activos.length === 0){
+    grid.innerHTML = '<div class="footnote">No hay inscritos activos.</div>';
+    return;
+  }
+  grid.innerHTML = activos.map(function(d){
+    var seg = isSeguimiento(d);
+    var momentos = getMomentosDisponibles(d);
+    var btns = momentos.map(function(m){
+      var copy = copyMap[m];
+      if(!copy) return "";
+      return '<button class="wa-btn" onclick="abrirCopyDirecto(\''+encodeURIComponent(d.Nombre)+'\',\''+encodeURIComponent(m)+'\')">'
+        + '<span class="ic">●</span> '+m+'</button>';
+    }).join("");
+    return '<div class="gcard '+(seg?'seguimiento':'')+'">'
+      + '<div class="gcard-head">'
+      + '<div class="avatar">'+initials(d.Nombre)+'</div>'
+      + '<div><div class="gname">'+d.Nombre+'</div><div class="gsuc">'+(d.Sucursal||"")+'</div></div>'
+      + '</div>'
+      + '<span class="pill semana">Sem '+(d.Semana_Actual||"—")+'</span>'
+      + (seg ? '<span class="pill seguimiento-tag">🏳 seguimiento</span>' : '<span class="pill activo">activo</span>')
+      + '<div class="gactions">'+btns+'</div>'
+      + '</div>';
+  }).join("");
+}
+
+function renderTabla(filtered){
+  var copyMap = buildCopyMap();
+  var body = document.getElementById("tablaBody");
+  if(filtered.length === 0){
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-soft);">Sin resultados</td></tr>';
+    return;
+  }
+  var html = "";
+  filtered.forEach(function(d, i){
+    var seg = isSeguimiento(d);
+    var estado = (d.Estado||"").toLowerCase();
+    var estadoPill = estado === "activo"
+      ? '<span class="pill activo">Activo</span>'
+      : estado === "baja"
+        ? '<span class="pill baja">Baja</span>'
+        : '<span class="pill inactivo">'+(d.Estado||"—")+'</span>';
+
+    var momentos = getMomentosDisponibles(d);
+    var btns = momentos.map(function(m){
+      var copy = copyMap[m];
+      if(!copy) return "";
+      return '<button class="wa-btn" onclick="toggleCopyPanel('+i+',\''+encodeURIComponent(d.Nombre)+'\',\''+encodeURIComponent(m)+'\')">'
+        + '<span class="ic">●</span> '+m+'</button>';
+    }).join("");
+
+    html += '<tr class="'+(seg?'seguimiento-row':'')+'">'
+      + '<td><div class="name-cell">'
+      + (seg ? '<span class="dot-new"></span>' : '')
+      + '<div><div style="font-weight:600;">'+d.Nombre+'</div>'
+      + (seg ? '<span style="font-size:11px;color:var(--text-soft);">nuevo — requiere seguimiento</span>' : '')
+      + '</div></div></td>'
+      + '<td>'+(d.Sucursal||"—")+'</td>'
+      + '<td><span class="pill semana">Sem '+(d.Semana_Actual||"—")+'</span></td>'
+      + '<td>'+estadoPill
+      + (seg ? ' <button class="atender-btn" onclick="alert(\'Para marcar como atendido, cambia Requiere_Seguimiento a No en RA_Inscritos para '+d.Nombre.replace(/'/g,"\\'")+'.\')">✓ marcar atendido</button>' : '')
+      + '</td>'
+      + '<td><div style="display:flex;flex-wrap:wrap;gap:5px;">'+(btns||'<span style="color:var(--text-soft);font-size:12px;">—</span>')+'</div></td>'
+      + '</tr>'
+      + '<tr class="expand-row" id="exp-'+i+'"><td colspan="5"><div class="copy-panel" id="cp-'+i+'"></div></td></tr>';
+  });
+  body.innerHTML = html;
+}
+
+function toggleCopyPanel(idx, nombreEnc, momentoEnc){
+  var nombre = decodeURIComponent(nombreEnc);
+  var momento = decodeURIComponent(momentoEnc);
+  var d = INSCRITOS.find(function(x){ return x.Nombre === nombre; });
+  if(!d) return;
+  var copyMap = buildCopyMap();
+  var copy = copyMap[momento];
+  var panel = document.getElementById("cp-"+idx);
+  if(!panel) return;
+
+  document.querySelectorAll('.copy-panel').forEach(function(p){ if(p !== panel) p.classList.remove('open'); });
+
+  if(panel.classList.contains('open') && panel.dataset.momento === momento){
+    panel.classList.remove('open');
+    return;
+  }
+  if(!copy){ alert("No se encontró el copy para este momento."); return; }
+
+  var texto = sustituirVariables(copy.Copy_Texto, d);
+  var url = waLink(d.Telefono_WA, texto);
+
+  panel.innerHTML = '<div class="copy-inner">'
+    + '<div>'
+    + '<div class="momento-title">'+momento+'</div>'
+    + '<div class="copy-label">copy desde Google Sheets</div>'
+    + '<div class="copy-text">'+texto+'</div>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;padding-top:24px;align-items:center;">'
+    + '<a href="'+url+'" target="_blank" class="open-wa">Abrir en WhatsApp</a>'
+    + '<span style="font-size:11px;color:var(--text-soft);">abre wa.me directo</span>'
+    + '</div></div>';
+  panel.dataset.momento = momento;
+  panel.classList.add('open');
+}
+
+function abrirCopyDirecto(nombreEnc, momentoEnc){
+  var nombre = decodeURIComponent(nombreEnc);
+  var momento = decodeURIComponent(momentoEnc);
+  var d = INSCRITOS.find(function(x){ return x.Nombre === nombre; });
+  if(!d) return;
+  var copyMap = buildCopyMap();
+  var copy = copyMap[momento];
+  if(!copy){ alert("No se encontró el copy para este momento."); return; }
+  var texto = sustituirVariables(copy.Copy_Texto, d);
+  window.open(waLink(d.Telefono_WA, texto), "_blank");
+}
+
+function applyFilters(){
+  var q = document.getElementById("fSearch").value.toLowerCase();
+  var estado = document.getElementById("fEstado").value;
+  var seguimiento = document.getElementById("fSeguimiento").value;
+  var filtered = INSCRITOS.filter(function(d){
+    var matchQ = !q || (d.Nombre||"").toLowerCase().indexOf(q)>=0 || (d.Sucursal||"").toLowerCase().indexOf(q)>=0;
+    var matchE = !estado || d.Estado === estado;
+    var seg = isSeguimiento(d);
+    var matchS = !seguimiento || (seguimiento === "Si" && seg);
+    return matchQ && matchE && matchS;
+  });
+  renderTabla(filtered);
+}
+
+function renderHistorial(filtered){
+  var body = document.getElementById("historialBody");
+  if(!filtered || filtered.length === 0){
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-soft);">Sin registros</td></tr>';
+    return;
+  }
+  var html = "";
+  filtered.forEach(function(s){
+    var pill = (s.Reacciono||"").toLowerCase() === "sí" || (s.Reacciono||"").toLowerCase() === "si"
+      ? '<span class="pill activo">Sí</span>'
+      : '<span class="pill inactivo">'+(s.Reacciono||"—")+'</span>';
+    html += '<tr>'
+      + '<td style="font-weight:600;">'+s.Nombre+'</td>'
+      + '<td>Sem '+(s.Semana||"—")+'</td>'
+      + '<td>'+pill+'</td>'
+      + '<td style="font-size:12px;color:var(--text-soft);">'+(s.Notas||"")+'</td>'
+      + '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function applyHistorialFilters(){
+  var q = document.getElementById("fHistSearch").value.trim().toLowerCase();
+  var sem = document.getElementById("fHistSemana").value;
+  var filtered = SEMANAS.filter(function(s){
+    var matchQ = !q || (s.Nombre||"").toLowerCase().indexOf(q)>=0;
+    var matchS = !sem || String(s.Semana) === sem;
+    return matchQ && matchS;
+  });
+  renderHistorial(filtered);
+}
+
+function initHistorialFilters(){
+  var semSet = {};
+  SEMANAS.forEach(function(s){ if(s.Semana) semSet[s.Semana] = true; });
+  var sel = document.getElementById("fHistSemana");
+  Object.keys(semSet).sort(function(a,b){ return Number(a)-Number(b); }).forEach(function(s){
+    var opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = "Semana "+s;
+    sel.appendChild(opt);
+  });
+  document.getElementById("fHistSearch").addEventListener("input", applyHistorialFilters);
+  document.getElementById("fHistSemana").addEventListener("change", applyHistorialFilters);
+}
+
+async function init(){
+  try{
+    var results = await Promise.all([
+      fetchSheetTab(TABS.inscritos),
+      fetchSheetTab(TABS.semanas),
+      fetchSheetTab(TABS.copys)
+    ]);
+    INSCRITOS = results[0].filter(function(d){ return d.Nombre && d.Nombre.trim() !== ""; });
+    SEMANAS = results[1].filter(function(s){ return s.Nombre && s.Nombre.trim() !== ""; });
+    COPYS = results[2].filter(function(c){ return c.Momento && c.Momento.trim() !== ""; });
+
+    document.getElementById("loadingMsg").style.display = "none";
+    document.getElementById("appContent").style.display = "block";
+    document.getElementById("lastSync").textContent = "actualizado: "+new Date().toLocaleString("es-MX",{dateStyle:"medium",timeStyle:"short"});
+
+    renderMetrics();
+    renderCopyHighlight();
+    renderCards();
+    applyFilters();
+    initHistorialFilters();
+    renderHistorial(SEMANAS);
+
+    document.getElementById("fSearch").addEventListener("input", applyFilters);
+    document.getElementById("fEstado").addEventListener("change", applyFilters);
+    document.getElementById("fSeguimiento").addEventListener("change", applyFilters);
+
+  } catch(err){
+    console.error("ERROR en init:", err.message, err.stack);
+    document.getElementById("loadingMsg").style.display = "none";
+    var eb = document.getElementById("errorMsg");
+    eb.style.display = "block";
+    eb.textContent = "No se pudieron cargar los datos desde Google Sheets. Verifica que el Sheet esté compartido y que las pestañas RA_Inscritos, RA_Semanas y RA_Copys existan.";
+  }
+}
+
+init();
+</script>
+</body>
+</html>
