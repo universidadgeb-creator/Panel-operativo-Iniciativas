@@ -101,6 +101,17 @@
   .loading,.errorbox{text-align:center;padding:40px;color:var(--text-soft);font-size:14px;}
   .errorbox{color:var(--red-text);}
 
+  /* Formulario de reacción inline en tarjetas */
+  .reaccion-form{margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;display:none;flex-direction:column;gap:8px;}
+  .reaccion-form.open{display:flex;}
+  .reaccion-form label{font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.03em;}
+  .reaccion-form select,.reaccion-form input[type=number]{font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;width:100%;}
+  .reaccion-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .submit-reaccion{font-size:12px;font-weight:600;padding:7px 12px;border-radius:7px;border:none;background:var(--blue);color:#fff;cursor:pointer;}
+  .submit-reaccion:hover{background:#0e2f5c;}
+  .submit-reaccion:disabled{opacity:.6;cursor:default;}
+  .toggle-react-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--blue);background:#EEF1F7;border:1px solid #CBD4E6;border-radius:8px;padding:7px 10px;cursor:pointer;margin-top:6px;}
+
   @media(max-width:720px){
     .metric-grid{grid-template-columns:repeat(2,1fr);}
     .copy-inner{grid-template-columns:1fr;}
@@ -342,11 +353,11 @@ function sustituirVariables(texto, d){
 }
 
 function getMomentosDisponibles(d){
-  if(isSeguimiento(d)) return ["Bienvenida"];
   var estado = (d.Estado||"").toLowerCase();
   if(estado === "baja") return ["Baja voluntaria"];
-  if(estado === "activo") return ["Copy semanal","Anuncio de bono"];
-  return [];
+  var semana = parseInt(d.Semana_Actual) || 0;
+  if(semana > 0) return ["Copy semanal","Anuncio de bono"];
+  return ["Bienvenida"];
 }
 
 var INSCRITOS = [];
@@ -396,7 +407,9 @@ function renderCopyHighlight(){
   var copy = copyMap["Copy semanal"];
   var box = document.getElementById("copyHighlight");
   if(!copy){ box.style.display = "none"; return; }
-  var activos = INSCRITOS.filter(function(d){ return (d.Estado||"").toLowerCase() === "activo" && !isSeguimiento(d); }).length;
+  var activos = INSCRITOS.filter(function(d){
+    return (d.Estado||"").toLowerCase() === "activo" && (parseInt(d.Semana_Actual)||0) > 0;
+  }).length;
   document.getElementById("copyHighlightText").textContent = copy.Copy_Texto || "";
   document.getElementById("copyHighlightMeta").textContent = activos + " colaboradores activos para envío";
   box.style.display = "block";
@@ -414,6 +427,7 @@ function renderCards(){
   }
   grid.innerHTML = activos.map(function(d){
     var seg = isSeguimiento(d);
+    var semana = parseInt(d.Semana_Actual) || 0;
     var momentos = getMomentosDisponibles(d);
     var btns = momentos.map(function(m){
       var copy = copyMap[m];
@@ -421,16 +435,61 @@ function renderCards(){
       return '<button class="wa-btn" onclick="abrirCopyDirecto(\''+encodeURIComponent(d.Nombre)+'\',\''+encodeURIComponent(m)+'\')">'
         + '<span class="ic">●</span> '+m+'</button>';
     }).join("");
+    var formId = "rf-"+d.Nombre.replace(/\s+/g,"_");
+    var reaccionForm = semana > 0
+      ? '<button class="toggle-react-btn" onclick="toggleReaccionForm(\''+formId+'\')">+ registrar reacción</button>'
+        + '<div class="reaccion-form" id="'+formId+'">'
+        + '<div class="reaccion-row">'
+        + '<div><label>Semana</label><input type="number" id="'+formId+'-sem" min="1" max="52" value="'+semana+'" style="width:100%;"></div>'
+        + '<div><label>¿Reaccionó?</label><select id="'+formId+'-rea"><option value="Sí">Sí</option><option value="No">No</option></select></div>'
+        + '</div>'
+        + '<input type="text" placeholder="Notas (opcional)" id="'+formId+'-not" style="font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;">'
+        + '<button class="submit-reaccion" id="'+formId+'-btn" onclick="submitReaccion(\''+encodeURIComponent(d.Nombre)+'\',\''+formId+'\')">Guardar reacción</button>'
+        + '</div>'
+      : "";
     return '<div class="gcard '+(seg?'seguimiento':'')+'">'
       + '<div class="gcard-head">'
       + '<div class="avatar">'+initials(d.Nombre)+'</div>'
       + '<div><div class="gname">'+d.Nombre+'</div><div class="gsuc">'+(d.Sucursal||"")+'</div></div>'
       + '</div>'
-      + '<span class="pill semana">Sem '+(d.Semana_Actual||"—")+'</span>'
-      + (seg ? '<span class="pill seguimiento-tag">🏳 seguimiento</span>' : '<span class="pill activo">activo</span>')
-      + '<div class="gactions">'+btns+'</div>'
+      + '<span class="pill semana">Sem '+(semana||"—")+'</span>'
+      + (seg ? '<span class="pill seguimiento-tag">seguimiento</span>' : '<span class="pill activo">activo</span>')
+      + '<div class="gactions">'+btns+reaccionForm+'</div>'
       + '</div>';
   }).join("");
+}
+
+function toggleReaccionForm(formId){
+  var el = document.getElementById(formId);
+  if(el) el.classList.toggle("open");
+}
+
+var WEBAPP_URL = "https://script.google.com/macros/s/AKfycby8QmMkIKFlse1yIsIxJk6LjvBW8WYjNTf51f54KubtakiKkYhUOPZmYUN4S76JBF_YeQ/exec";
+
+function submitReaccion(nombreEnc, formId){
+  var nombre = decodeURIComponent(nombreEnc);
+  var semVal = document.getElementById(formId+"-sem").value;
+  var reaVal = document.getElementById(formId+"-rea").value;
+  var notVal = (document.getElementById(formId+"-not").value || "").trim();
+  var btn = document.getElementById(formId+"-btn");
+  if(!semVal){ alert("Indica el número de semana."); return; }
+  btn.disabled = true;
+  btn.textContent = "Guardando…";
+  fetch(WEBAPP_URL, {
+    method:"POST",
+    body: JSON.stringify({ tipo:"ra_reaccion", nombre:nombre, semana:semVal, reacciono:reaVal, notas:notVal })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.ok){
+      btn.textContent = "✓ Guardado";
+      setTimeout(function(){ document.getElementById(formId).classList.remove("open"); btn.disabled=false; btn.textContent="Guardar reacción"; }, 1500);
+    } else {
+      alert("Error: "+(data.error||"desconocido"));
+      btn.disabled = false; btn.textContent = "Guardar reacción";
+    }
+  })
+  .catch(function(){ alert("Error de red al guardar."); btn.disabled=false; btn.textContent="Guardar reacción"; });
 }
 
 function renderTabla(filtered){
