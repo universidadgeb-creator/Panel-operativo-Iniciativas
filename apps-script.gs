@@ -489,7 +489,7 @@ function generarReciboPorFilaBib_(fila) {
   if (idx.reciboEnviado >= 0)
     hoja.getRange(fila, idx.reciboEnviado + 1).setValue("Generado " + formatearFechaBib_(new Date()));
   if (idx.linkRecibo >= 0)
-    hoja.getRange(fila, idx.linkRecibo + 1).setFormula(`=HYPERLINK("${url}","📄 Ver recibo")`).setFontColor("#1D9E75");
+    hoja.getRange(fila, idx.linkRecibo + 1).setValue(url).setFontColor("#1D9E75");
 
   return { folio, url };
 }
@@ -580,7 +580,7 @@ function generarEtiquetaPorFilasBib_(filas) {
     if (idx.etiquetaGenerada >= 0)
       hoja.getRange(f, idx.etiquetaGenerada + 1).setValue("Generada " + formatearFechaBib_(new Date()));
     if (idx.linkEtiqueta >= 0)
-      hoja.getRange(f, idx.linkEtiqueta + 1).setFormula(`=HYPERLINK("${url}","🏷️ Ver etiqueta")`).setFontColor("#1D9E75");
+      hoja.getRange(f, idx.linkEtiqueta + 1).setValue(url).setFontColor("#1D9E75");
   });
 
   return { url, cantidad: etiquetas.length };
